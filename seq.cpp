@@ -24,8 +24,8 @@ struct  noteOnInfo {
     
 		
 		
-using timestep = std::vector<noteEvent>;
-using sequence = std::vector<std::unique_ptr<timestep>>;
+typedef  std::vector<noteEvent> timestep;
+typedef  std::vector<std::unique_ptr<timestep>> sequence;
 
 
 
