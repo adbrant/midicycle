@@ -26,7 +26,7 @@ void midicycle_free(t_midicycle *x)
   delete x->x_midicycle;
 }    
 
-void counter_note(t_midicycle *x, t_floatarg f1, t_floatarg f2)  
+void midicycle_note(t_midicycle *x, t_floatarg f1, t_floatarg f2)  
 {   
 }    
  
@@ -37,7 +37,7 @@ void midicycle_setup(void) {
         CLASS_DEFAULT, (t_atomtype)0);  
   class_addbang(midicycle_class, midicycle_bang);
   class_addmethod(midicycle_class,
-        (t_method)counter_note, gensym("note"),
+        (t_method)midicycle_note, gensym("note"),
         A_DEFFLOAT,A_DEFFLOAT, 0);  
 }
 }
