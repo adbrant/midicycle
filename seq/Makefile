@@ -1,6 +1,6 @@
 
 test: seq.cpp
-	g++ seq.cpp -o test
+	g++ -std=c++14 seq.cpp -o test 
 	./test | grep 'Done'
 	
 clean:
