@@ -38,7 +38,7 @@ m_note_reserve{note_reserve}, m_sequence_data(sequence_size),m_empty_vectors{},m
 	m_empty_vectors.reserve(empty_reserve);
 
 };
-/*
+
 void note_event(char note, char velocity) {
   assert(note >= 0 and velocity >= 0);
     
@@ -50,19 +50,19 @@ void note_event(char note, char velocity) {
     // Note off
     auto iter = m_held_notes.find( note);
     if(iter != m_held_notes.end()){
-      noteOnInfo note_on_info = *iter;
+      const noteOnInfo & note_on_info = (*iter).second;
       // need to handle looping
-      short duration = (short)(step - note_on_info.start);
+      short duration = (short)(m_step - note_on_info.start);
 
-      noteEvent note_event = {note, note_on_info.velocity, step}
-      add_note( note_event, 
+      noteEvent note_event = {note, note_on_info.velocity, duration};
+      add_note( note_on_info.start, note_event);
       
       m_held_notes.erase( iter);
     }
     
   }
     
-};*/
+};
   
 void add_note(int step, noteEvent note);
 void clear_step(int step) {
@@ -121,7 +121,7 @@ void SeqRecorder::print_usage()
   printf("Total in Empty = %d\n", total);  
 }
 
-
+#ifdef TEST
 int main() {
   
    int steps=24*4*64*64;
@@ -141,3 +141,4 @@ int main() {
    printf("Done\n");
    return 0;
 }
+#endif
