@@ -1,0 +1,5 @@
+#N canvas 252 101 295 255 10;
+#X obj 94 89 midicycle;
+#X obj 70 38 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X connect 1 0 0 0;
