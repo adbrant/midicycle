@@ -1,6 +1,6 @@
-#include "seq.h"
+#include "SeqRecorder.hpp"
 		
-
+using namespace MCycle;
 void SeqRecorder::add_note(int step, noteEvent note)
 {
 	// Optimized for
@@ -51,8 +51,7 @@ int main() {
        if(rand() % 256 < 8) { 
         record.add_note(rand() % steps, n);
        }
-       
-       
+            
    }
    record.print_usage();
    printf("Done\n");

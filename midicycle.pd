@@ -2,4 +2,6 @@
 #X obj 94 89 midicycle;
 #X obj 70 38 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
 -1;
+#X msg 60 -3 note 72 127;
 #X connect 1 0 0 0;
+#X connect 2 0 0 0;
