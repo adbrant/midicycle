@@ -1,5 +1,6 @@
-#include "m_pd.h"  
- 
+#include "m_pd.h"
+#include "seq\seq.h"  
+extern "C" {
 static t_class *midicycle_class;  
  
 typedef struct _midicycle {  
@@ -8,6 +9,7 @@ typedef struct _midicycle {
  
 void midicycle_bang(t_midicycle *x)  
 {  
+    post("Test");  
 }  
  
 void *midicycle_new(void)  
@@ -21,6 +23,7 @@ void midicycle_setup(void) {
   midicycle_class = class_new(gensym("midicycle"),  
         (t_newmethod)midicycle_new,  
         0, sizeof(t_midicycle),  
-        CLASS_DEFAULT, 0);  
+        CLASS_DEFAULT, (t_atomtype)0);  
   class_addbang(midicycle_class, midicycle_bang);  
+}
 }

@@ -14,8 +14,8 @@ common.sources = seq/seq.cpp
 datafiles = readme
 
 cflags = -std=c++14
+CC = g++
 
-ldflags =  -lstdc++ -static-libgcc -static-libstdc++ -export-dynamic -shared 
 
 # include Makefile.pdlibbuilder from submodule directory 'pd-lib-builder'
 PDLIBBUILDER_DIR=pd-lib-builder/
