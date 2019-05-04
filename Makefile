@@ -13,7 +13,7 @@ common.sources = seq/seq.cpp
 # all extra files to be included in binary distribution of the library
 datafiles = readme
 
-cflags = -std=c++14
+cflags = -std=c++14 -I seq
 CC = g++
 
 

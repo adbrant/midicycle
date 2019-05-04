@@ -1,5 +1,5 @@
 #include "m_pd.h"
-#include "seq\seq.h"  
+#include "seq.h"  
 extern "C" {
 static t_class *midicycle_class;  
  
