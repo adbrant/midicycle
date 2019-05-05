@@ -13,7 +13,7 @@ common.sources = seq/SeqRecorder.cpp
 # all extra files to be included in binary distribution of the library
 datafiles = readme
 
-cflags = -std=c++14 -I seq
+cflags = -std=c++14 -I seq -Wno-unused-parameter
 CC = g++
 
 
