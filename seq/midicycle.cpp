@@ -1,5 +1,7 @@
 #include "m_pd.h"
 #include "MidiCycle.hpp"  
+
+// Pure data external interface definition
 using namespace MCycle;
 extern "C" {
 static t_class *midicycle_class;  
@@ -11,8 +13,6 @@ typedef struct _midicycle {
   t_atom output_list[2];
 } t_midicycle;  
  
- 
-  
 void midicycle_bang(t_midicycle *x)  
 {  
     post("Test");
@@ -37,7 +37,7 @@ void midicycle_free(t_midicycle *x)
 
 void midicycle_note(t_midicycle *x, t_floatarg f1, t_floatarg f2)  
 {
-  x->x_midicycle->note_event(unsigned(f1), unsigned(f2));
+  x->x_midicycle->note_event(unsigned(f1),unsigned(f2));
 }  
 
 void midicycle_tick(t_midicycle *x, t_floatarg f1)  
@@ -46,10 +46,11 @@ void midicycle_tick(t_midicycle *x, t_floatarg f1)
 }     
  
  
-void midicycle_loop(t_midicycle *x, t_floatarg f1 ) 
+void midicycle_loop(t_midicycle *x, t_floatarg beats ) 
 {
-
+  x->x_midicycle->loop(unsigned(beats));
 }     
+
 void midicycle_setup(void) {  
   midicycle_class = class_new(gensym("midicycle"),  
         (t_newmethod)midicycle_new,  

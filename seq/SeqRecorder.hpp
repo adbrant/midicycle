@@ -6,6 +6,7 @@
 #include<utility>
 #include <stdlib.h>  
 #include <assert.h> 
+#include "mcycle_defs.hpp"
 namespace MCycle {
 struct  noteEvent {
   char note;
@@ -13,10 +14,6 @@ struct  noteEvent {
 	short duration;
 	};
 
-struct  noteOnInfo {
-	char velocity;
-	int start;
-	};
     
 typedef  std::vector<noteEvent> timestep;
 typedef  std::vector<std::unique_ptr<timestep>> sequence;
@@ -41,7 +38,10 @@ class SeqRecorder {
       m_sequence_data[step]->clear();
       m_empty_vectors.push_back( std::move(m_sequence_data[step]));
      };
-     
+    
+    bool step_empty(int step){
+      return (m_sequence_data[step] == nullptr);  
+    }
     const timestep& get_step (int step) const {
       assert(step >= 0 && step < m_sequence_size);
       return *m_sequence_data[step];
