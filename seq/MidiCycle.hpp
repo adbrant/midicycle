@@ -48,15 +48,20 @@ class MidiCycle {
 
 
 void MidiCycle::note_event(char note, char velocity) {
+  // Takes note on and off events
+  // Once they are complete, write to the note recorder
   if(note < 0 or velocity < 0) {
     post("MidiCycle: Invalid note");
     return;
   }
     
   if(velocity){
-    // Note on
-    noteOnInfo note_on_info = { velocity, m_step_global};
-    m_held_notes.insert({note, note_on_info});
+    // Don't start new notes if we are playing
+    if(!m_playing) {
+      // Note on
+      noteOnInfo note_on_info = { velocity, m_step_global};
+      m_held_notes.insert({note, note_on_info});
+    }
   } else {
     // Note off
     auto iter = m_held_notes.find( note);
@@ -80,6 +85,10 @@ void MidiCycle::note_event(char note, char velocity) {
 
 void MidiCycle::tick(int tick)
 {
+  // One PPQ midi clock tick
+  // If we are playing, emit any note ons
+  // If we are recording, clear this step
+  // Emit any note offs we have scheduled
   m_step = (m_step+1)%m_max_length;
   m_step_global++;
   
@@ -103,7 +112,9 @@ void MidiCycle::tick(int tick)
       }
     }
   } else {
-    m_seq_recorder.clear_step(m_step);
+    // Clear this step
+    // New notes will be commited later when they complete
+    m_seq_recorder.clear_step((m_step+1)%m_max_length);
   }
   while(!m_playing_notes.empty() && (*m_playing_notes.begin()).first <= m_step_global){
     output_note((*m_playing_notes.begin()).second, 0);
@@ -113,6 +124,7 @@ void MidiCycle::tick(int tick)
 
 void MidiCycle::loop(int beats)
 {
+  // if beats > 0 start looping, else start recording again
   if(beats < 1) {
     // Stop playing and start recording again 
     m_playing = false;

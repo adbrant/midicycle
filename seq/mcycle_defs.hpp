@@ -5,7 +5,5 @@
 
 
 namespace MCycle {
-  
-enum  {PPQ=24}; // Pulses per quarter note
-
+  enum  {PPQ=24}; // Pulses per quarter note
 }
