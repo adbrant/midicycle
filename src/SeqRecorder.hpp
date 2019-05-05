@@ -8,18 +8,10 @@
 #include <assert.h> 
 #include "mcycle_defs.hpp"
 namespace MCycle {
-struct  noteEvent {
-  char note;
-	char velocity;
-	short duration;
-	};
 
-    
-typedef  std::vector<noteEvent> timestep;
-typedef  std::vector<std::unique_ptr<timestep>> sequence;
 
 /*
-SeqRecorder used to record 
+SeqRecorder used to record midi notes into a buffer 
 */
 class SeqRecorder {
   public:

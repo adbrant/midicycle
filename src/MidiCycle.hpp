@@ -3,10 +3,7 @@
 #include "m_pd.h"
 namespace MCycle {
 
-struct  noteOnInfo {
-	char velocity;
-	long long start;
-	};
+
 
 class MidiCycle {
   public:
@@ -16,14 +13,14 @@ class MidiCycle {
     {
     }
     // Incoming note on/off to the record
-    void note_event(char note, char velocity);
+    void note_event(note_id note, char velocity);
     // PPQ ticks from MIDI clock
     void tick(int tick);
-    // Loo
+    // Loop # of beats, or stop looping is arg is 0
     void loop(int beats);
   private:
     // Emit note to PD outlet
-    void output_note(char note, char velocity) {
+    void output_note(note_id note, char velocity) {
       DEBUG_POST("note %d %d",note, velocity );
       SETFLOAT(m_output_list, note);
 	    SETFLOAT(m_output_list+1, velocity);
@@ -36,8 +33,8 @@ class MidiCycle {
     // Steps seen regardless of loop
     long long m_step_global;
     int m_max_length;
-    std::multimap<char, noteOnInfo> m_held_notes; 
-    std::multimap<long long, char> m_playing_notes;
+    std::multimap<note_id, noteOnInfo> m_held_notes; 
+    std::multimap<long long, note_id> m_playing_notes;
     // Pd outlet handle
     t_outlet * m_outlet;
     t_atom m_output_list[2];
@@ -47,7 +44,7 @@ class MidiCycle {
 };
 
 
-void MidiCycle::note_event(char note, char velocity) {
+void MidiCycle::note_event(note_id note, char velocity) {
   // Takes note on and off events
   // Once they are complete, write to the note recorder
   if(note < 0 or velocity < 0) {
@@ -56,7 +53,7 @@ void MidiCycle::note_event(char note, char velocity) {
   }
     
   if(velocity){
-    // Don't start new notes if we are playing
+    // Don't record new notes if we are playing
     if(!m_playing) {
       // Note on
       noteOnInfo note_on_info = { velocity, m_step_global};
@@ -64,7 +61,7 @@ void MidiCycle::note_event(char note, char velocity) {
     }
   } else {
     // Note off
-    auto iter = m_held_notes.find( note);
+    auto iter = m_held_notes.find(note);
     if(iter != m_held_notes.end()){
       const noteOnInfo & note_on_info = (*iter).second;
 
