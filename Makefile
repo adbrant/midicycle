@@ -6,14 +6,14 @@
 lib.name = midicycle
 
 # input source file (class name == source file basename)
-class.sources = seq/midicycle.cpp
+class.sources = src/midicycle.cpp
 
-common.sources = seq/SeqRecorder.cpp 
+common.sources = src/SeqRecorder.cpp 
 
 # all extra files to be included in binary distribution of the library
 datafiles = readme
 
-cflags = -std=c++14 -I seq -Wno-unused-parameter
+cflags = -std=c++14 -Wno-unused-parameter
 CC = g++
 
 
