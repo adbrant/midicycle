@@ -8,7 +8,7 @@ public:
   MidiCycle(int max_length, t_outlet *outlet)
       : m_seq_recorder(max_length), m_state{mcState::EMPTY}, m_step{0},
         m_step_global{0}, m_max_length{max_length}, m_held_notes(),
-        m_playing_notes(), m_outlet{outlet}, m_quantize(0), m_quantize_changed(false) {}
+        m_playing_notes(), m_outlet{outlet}, m_quantize(0), m_quantize_changed(false), m_overdub(false) {}
   // Incoming note on/off to the record
   void note_event(note_id note, char velocity);
   // PPQ ticks from MIDI clock
@@ -18,7 +18,9 @@ public:
   // Quantize output to division 1-4, 0 is unquantized
   void quantize(int division);
   
-
+void overdub(bool overdub) {
+  m_overdub=overdub;
+}
 private:
   // Emit note to PD outlet
   void output_note(note_id note, char velocity) {
@@ -28,7 +30,7 @@ private:
     outlet_list(m_outlet, &s_list, 2, m_output_list);
   }
   
-  enum class mcState { EMPTY,PLAYING,STOP,OVERDUB };
+  enum class mcState { EMPTY,PLAYING,STOP };
   
   SeqRecorder m_seq_recorder;
   mcState m_state;
@@ -49,6 +51,7 @@ private:
   int m_quantize_position;
   int m_quantize;
   bool m_quantize_changed;
+  bool m_overdub;
 };
 
 void MidiCycle::note_event(note_id note, char velocity) {
@@ -61,7 +64,7 @@ void MidiCycle::note_event(note_id note, char velocity) {
 
   if (velocity) {
     // Don't record new notes if we are playing
-    if (m_state == mcState::EMPTY || m_state == mcState::OVERDUB) {
+    if (m_state == mcState::EMPTY || m_overdub) {
       // Note on
       noteOnInfo note_on_info{velocity, m_step_global,m_step };
       m_held_notes.insert({note, note_on_info});
@@ -194,4 +197,6 @@ void MidiCycle::quantize(int division) {
     m_quantize_changed = true;
   }
 }
+
+
 }

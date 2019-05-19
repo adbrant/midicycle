@@ -46,6 +46,10 @@ void midicycle_quantize(t_midicycle *x, t_floatarg division) {
   x->x_midicycle->quantize(unsigned(division));
 }
 
+void midicycle_overdub(t_midicycle *x, t_floatarg odub) {
+  x->x_midicycle->overdub(odub > 0.5);
+}
+
 void midicycle_setup(void) {
   midicycle_class = class_new(gensym("midicycle"), (t_newmethod)midicycle_new,
                               (t_method)midicycle_free, sizeof(t_midicycle),
@@ -59,5 +63,7 @@ void midicycle_setup(void) {
                   A_DEFFLOAT, 0);
   class_addmethod(midicycle_class, (t_method)midicycle_quantize,
                   gensym("quantize"), A_DEFFLOAT, 0);
+  class_addmethod(midicycle_class, (t_method)midicycle_overdub,
+                  gensym("overdub"), A_DEFFLOAT, 0);                  
 }
 }
