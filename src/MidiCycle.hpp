@@ -8,7 +8,7 @@ public:
   MidiCycle(int max_length, t_outlet *outlet)
       : m_seq_recorder(max_length), m_state{mcState::EMPTY}, m_step{0},
         m_step_global{0}, m_max_length{max_length}, m_held_notes(),
-        m_playing_notes(), m_outlet{outlet}, m_quantize(0), m_quantize_change(false) {}
+        m_playing_notes(), m_outlet{outlet}, m_quantize(0), m_quantize_changed(false) {}
   // Incoming note on/off to the record
   void note_event(note_id note, char velocity);
   // PPQ ticks from MIDI clock
@@ -99,9 +99,10 @@ void MidiCycle::tick(int tick) {
   if (tick != (m_step % 24)) {
     if (tick == 0) {
       m_step -= (m_step % 24);
+      m_step = m_step % m_max_length;
+      m_quantize_changed = true;      
     }
-  }
-  
+  } 
   if (m_state == mcState::PLAYING) {   
     local_step steps_to_play = 1;
     // Depending on quantization play 0 or more steps
@@ -112,19 +113,18 @@ void MidiCycle::tick(int tick) {
         steps_to_play = 0;
       } else {
         
-        if(!m_quantize_change) {
+        if(!m_quantize_changed) {
           steps_to_play = quantize_len;
         } else {
           // Initial step, just play up to next beat
           m_quantize_position = m_step;
           steps_to_play = 1+(quantize_len/2);
-          m_quantize_change = false;
+          m_quantize_changed = false;
         }
       }   
     } 
     
-    while(steps_to_play > 0) {
-      
+    while(steps_to_play > 0) {      
       DEBUG_POST("Trying %d %d",m_step, m_quantize_position);
       if( (not m_seq_recorder.step_empty(m_quantize_position)) ){
         DEBUG_POST("Playing %d %d",m_step, m_quantize_position);
@@ -153,16 +153,14 @@ void MidiCycle::tick(int tick) {
     m_seq_recorder.clear_step((m_step + 1) % m_max_length);
     
     m_step = (m_step + 1) % m_max_length;
+
   }
   while (!m_playing_notes.empty() &&
          (*m_playing_notes.begin()).first <= m_step_global) {    
     output_note((*m_playing_notes.begin()).second, 0);    
     DEBUG_POST("Ending note %d global ts %d local ts %d",(*m_playing_notes.begin()).second, m_step_global, m_step);
-    m_playing_notes.erase(m_playing_notes.begin());   
-    
+    m_playing_notes.erase(m_playing_notes.begin());     
   }
-  
-  
   // One PPQ midi clock tick
   m_step_global++;
 }
@@ -193,8 +191,7 @@ void MidiCycle::quantize(int division) {
   } else {    
     m_quantize = division;
     // reset playback
-    m_quantize_position = m_step;
-    m_quantize_change = true;
+    m_quantize_changed = true;
   }
 }
 }

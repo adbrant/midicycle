@@ -1,0 +1,12 @@
+{
+    "name" : "MidiCycle",
+    "display" : "MidiCycle",
+    "parameters" :  [ 
+        ["int","mc_beats","Beats",0,64,4],
+        ["int","mc_quantize","Quantize",0,4,0],
+    ],
+    "pages" : [ 
+        ["pg_main","Main",["mc_beats","mc_quantize"]]
+    ]
+}
+
