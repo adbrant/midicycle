@@ -5,14 +5,14 @@ namespace MCycle {
 
 class MidiCycle {
 public:
-  MidiCycle(int max_length, t_outlet *outlet)
+  MidiCycle(int max_length)
       : m_seq_recorder(max_length), m_state{mcState::EMPTY}, m_step{0},
         m_step_global{0}, m_max_length{max_length}, m_held_notes(),
-        m_playing_notes(), m_outlet{outlet}, m_quantize(0), m_quantize_changed(false), m_overdub(false) {}
+        m_playing_notes(), m_quantize(0), m_quantize_changed(false), m_overdub(false),notes_out(){}
   // Incoming note on/off to the record
   void note_event(note_id note, char velocity);
-  // PPQ ticks from MIDI clock
-  void tick(int tick);
+  // PPQ ticks from MIDI clock, return note events
+  timestep&  tick(int tick);
   // Loop # of beats, or stop looping is arg is 0
   void loop(int beats);
   // Quantize output to division 1-4, 0 is unquantized
@@ -22,13 +22,6 @@ void overdub(bool overdub) {
   m_overdub=overdub;
 }
 private:
-  // Emit note to PD outlet
-  void output_note(note_id note, char velocity) {
-    DEBUG_POST("note %d %d", note, velocity);
-    SETFLOAT(m_output_list, note);
-    SETFLOAT(m_output_list + 1, velocity);
-    outlet_list(m_outlet, &s_list, 2, m_output_list);
-  }
   
   enum class mcState { EMPTY,PLAYING,STOP };
   
@@ -41,9 +34,6 @@ private:
   int m_max_length;
   std::multimap<note_id, noteOnInfo> m_held_notes;
   std::multimap<global_step, note_id> m_playing_notes;
-  // Pd outlet handle
-  t_outlet *m_outlet;
-  t_atom m_output_list[2];
   int m_num_beats;
   int m_loop_start;
   int m_loop_end;
@@ -52,6 +42,7 @@ private:
   int m_quantize;
   bool m_quantize_changed;
   bool m_overdub;
+  timestep notes_out;
 };
 
 void MidiCycle::note_event(note_id note, char velocity) {
@@ -91,21 +82,19 @@ void MidiCycle::note_event(note_id note, char velocity) {
   }
 };
 
-void MidiCycle::tick(int tick) {
+timestep& MidiCycle::tick(int tick) {
 
   // If we are playing, emit any note ons
   // If we are recording, clear this step
   // Emit any note offs we have scheduled
+  notes_out.clear();
   
   // We need to realign if we are out of sync
-  // Only do at beat boundaries
+  // do nothing until we are aligned
   if (tick != (m_step % 24)) {
-    if (tick == 0) {
-      m_step -= (m_step % 24);
-      m_step = m_step % m_max_length;
-      m_quantize_changed = true;      
-    }
+    return notes_out;
   } 
+  
   if (m_state == mcState::PLAYING) {   
     local_step steps_to_play = 1;
     // Depending on quantization play 0 or more steps
@@ -134,7 +123,7 @@ void MidiCycle::tick(int tick) {
         const timestep &tstep = m_seq_recorder.get_step(m_quantize_position);
         for (auto &note : tstep) {
           // Output note and schedule note off for a later global step
-          output_note(note.note, note.velocity);
+          notes_out.push_back(note);
           DEBUG_POST("Playing note %d duration %d local ts %d note_off at %d",note.note, note.duration, m_step, m_step_global + note.duration);
           m_playing_notes.insert( note_off_event(m_step_global + note.duration, note.note));
         }
@@ -159,13 +148,16 @@ void MidiCycle::tick(int tick) {
 
   }
   while (!m_playing_notes.empty() &&
-         (*m_playing_notes.begin()).first <= m_step_global) {    
-    output_note((*m_playing_notes.begin()).second, 0);    
+         (*m_playing_notes.begin()).first <= m_step_global) {  
+    noteEvent note_off = { (*m_playing_notes.begin()).second, 0};
+    notes_out.push_back(note_off);       
     DEBUG_POST("Ending note %d global ts %d local ts %d",(*m_playing_notes.begin()).second, m_step_global, m_step);
     m_playing_notes.erase(m_playing_notes.begin());     
   }
   // One PPQ midi clock tick
   m_step_global++;
+  
+  return notes_out;
 }
 
 void MidiCycle::loop(int beats) {

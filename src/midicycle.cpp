@@ -23,7 +23,7 @@ void midicycle_bang(t_midicycle *x) {
 void *midicycle_new(void) {
   t_midicycle *x = (t_midicycle *)pd_new(midicycle_class);
   x->notes_out = outlet_new(&x->x_obj, &s_list);
-  x->x_midicycle = new MidiCycle(PPQ * 4 * 16, x->notes_out);
+  x->x_midicycle = new MidiCycle(PPQ * 4 * 16);
 
   return (void *)x;
 }
@@ -35,7 +35,14 @@ void midicycle_note(t_midicycle *x, t_floatarg f1, t_floatarg f2) {
 }
 
 void midicycle_tick(t_midicycle *x, t_floatarg f1) {
-  x->x_midicycle->tick(unsigned(f1));
+  auto &tstep = x->x_midicycle->tick(unsigned(f1));
+  
+  for (auto &note : tstep) {
+    // Output events
+    SETFLOAT(x->output_list, note.note);
+    SETFLOAT(x->output_list + 1, note.velocity);
+    outlet_list(x->notes_out, &s_list, 2, x->output_list);
+  }  
 }
 
 void midicycle_loop(t_midicycle *x, t_floatarg beats) {
