@@ -87,36 +87,6 @@ void MidiCycle::note_event(note_id note, char velocity) {
     }
   }
 };
-/*
-// local_step inside the current loop bounds
-constexpr local_step legalize_step( const local_step instep, const local_step loop_start, const local_step loop_size,  const local_step array_size  )  {
-  local_step legal_step = instep%array_size;
-  bool wrapped_end = (loop_start+loop_size) > loop_end;
-  //re-baseline at loop_start
-  if(wrapped_end ){
-    if ( instep < loop_start  and instep > loop_end) {
-      // before loop start or after loop end
-
-    } else { // in loop region
-      // legalize into array
-      legal_step = instep%array_size;      
-    }
-    
-    local_step offset = instep - loop_start;
-    
-  } else {
-    local_step offset = instep - loop_start;
-  }
-  
-  return legal_step;
-}
-// Test various legalizations
-static_assert(legalize_step(0,0,PPQ,PPQ) == 0 );
-static_assert(legalize_step(PPQ,0,PPQ,PPQ) == 0 );
-// Loop wraps around end
-static_assert(legalize_step(PPQ,15*PPQ,2*PPQ,16*PPQ) == 15*PPQ );
-static_assert(legalize_step(15*PPQ-1,15*PPQ,2*PPQ,16*PPQ) == PPQ-1 );
-*/
 
 void MidiCycle::tick(int tick) {
 
