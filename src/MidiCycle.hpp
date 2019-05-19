@@ -48,7 +48,7 @@ private:
   int m_loop_len;
   int m_quantize_position;
   int m_quantize;
-  bool m_quantize_change;
+  bool m_quantize_changed;
 };
 
 void MidiCycle::note_event(note_id note, char velocity) {
