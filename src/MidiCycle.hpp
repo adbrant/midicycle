@@ -128,9 +128,9 @@ void MidiCycle::tick(int tick) {
     } 
     
     while(steps_to_play > 0) {      
-      DEBUG_POST("Trying %d %d",m_step, m_quantize_position);
+      //DEBUG_POST("Trying %d %d",m_step, m_quantize_position);
       if( (not m_seq_recorder.step_empty(m_quantize_position)) ){
-        DEBUG_POST("Playing %d %d",m_step, m_quantize_position);
+        //DEBUG_POST("Playing %d %d",m_step, m_quantize_position);
         const timestep &tstep = m_seq_recorder.get_step(m_quantize_position);
         for (auto &note : tstep) {
           // Output note and schedule note off for a later global step
