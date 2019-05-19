@@ -42,7 +42,7 @@ void midicycle_loop(t_midicycle *x, t_floatarg beats) {
   x->x_midicycle->loop(unsigned(beats));
 }
 
-void midicycle_loop(t_midicycle *x, t_floatarg division) {
+void midicycle_quantize(t_midicycle *x, t_floatarg division) {
   x->x_midicycle->quantize(unsigned(division));
 }
 

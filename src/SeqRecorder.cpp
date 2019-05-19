@@ -1,5 +1,5 @@
 #include "SeqRecorder.hpp"
-#include "m_pd.h"
+
 using namespace MCycle;
 
 void SeqRecorder::add_note(int step, noteEvent note) {

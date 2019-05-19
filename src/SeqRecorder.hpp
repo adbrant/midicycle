@@ -2,11 +2,8 @@
 
 #include "mcycle_defs.hpp"
 #include <assert.h>
-#include <map>
-#include <memory>
-#include <stdlib.h>
-#include <utility>
-#include <vector>
+
+
 namespace MCycle {
 
 /*
@@ -35,6 +32,7 @@ public:
 
   const timestep &get_step(int step) const {
     assert(step >= 0 && step < m_sequence_size);
+    assert(m_sequence_data[step] != NULL);
     return *m_sequence_data[step];
   };
 
