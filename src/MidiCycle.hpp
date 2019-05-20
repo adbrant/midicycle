@@ -2,13 +2,16 @@
 #include "SeqRecorder.hpp"
 
 namespace MCycle {
-
+enum class mcState { EMPTY,PLAYING,STOP };
 class MidiCycle {
 public:
   MidiCycle(int max_length)
       : m_seq_recorder(max_length), m_state{mcState::EMPTY}, m_step{0},
         m_step_global{0}, m_max_length{max_length}, m_held_notes(),
-        m_playing_notes(), m_quantize(0), m_quantize_changed(false), m_overdub(false),notes_out(){}
+        m_playing_notes(), m_quantize(0), m_quantize_changed(false), m_overdub(false),m_notes_out(){}
+        
+
+  
   // Incoming note on/off to the record
   void note_event(note_id note, char velocity);
   // PPQ ticks from MIDI clock, return note events
@@ -17,14 +20,29 @@ public:
   void loop(int beats);
   // Quantize output to division 1-4, 0 is unquantized
   void quantize(int division);
+
   
-void overdub(bool overdub) {
-  m_overdub=overdub;
-}
+  // Kill remaining notes
+  timestep&  flush();
+  
+  mcState get_state() { return m_state; }
+  void playstop() {
+    if (m_state == mcState::PLAYING) {
+      m_state = mcState::STOP;
+    } else if (m_state == mcState::STOP ) {
+      m_state = mcState::PLAYING;      
+    }
+  }  
+  void overdub(bool overdub) {
+    m_overdub=overdub;
+  }
+  bool overdubbing(){
+    return m_overdub;
+  }
+  
 private:
   
-  enum class mcState { EMPTY,PLAYING,STOP };
-  
+
   SeqRecorder m_seq_recorder;
   mcState m_state;
   // Step position in loop
@@ -34,7 +52,6 @@ private:
   int m_max_length;
   std::multimap<note_id, noteOnInfo> m_held_notes;
   std::multimap<global_step, note_id> m_playing_notes;
-  int m_num_beats;
   int m_loop_start;
   int m_loop_end;
   int m_loop_len;
@@ -42,7 +59,7 @@ private:
   int m_quantize;
   bool m_quantize_changed;
   bool m_overdub;
-  timestep notes_out;
+  timestep m_notes_out;
 };
 
 void MidiCycle::note_event(note_id note, char velocity) {
@@ -87,12 +104,14 @@ timestep& MidiCycle::tick(int tick) {
   // If we are playing, emit any note ons
   // If we are recording, clear this step
   // Emit any note offs we have scheduled
-  notes_out.clear();
+  
+  // Clear any previous notes
+  m_notes_out.clear();
   
   // We need to realign if we are out of sync
   // do nothing until we are aligned
   if (tick != (m_step % 24)) {
-    return notes_out;
+    return m_notes_out;
   } 
   
   if (m_state == mcState::PLAYING) {   
@@ -123,7 +142,7 @@ timestep& MidiCycle::tick(int tick) {
         const timestep &tstep = m_seq_recorder.get_step(m_quantize_position);
         for (auto &note : tstep) {
           // Output note and schedule note off for a later global step
-          notes_out.push_back(note);
+          m_notes_out.push_back(note);
           DEBUG_POST("Playing note %d duration %d local ts %d note_off at %d",note.note, note.duration, m_step, m_step_global + note.duration);
           m_playing_notes.insert( note_off_event(m_step_global + note.duration, note.note));
         }
@@ -150,14 +169,14 @@ timestep& MidiCycle::tick(int tick) {
   while (!m_playing_notes.empty() &&
          (*m_playing_notes.begin()).first <= m_step_global) {  
     noteEvent note_off = { (*m_playing_notes.begin()).second, 0};
-    notes_out.push_back(note_off);       
+    m_notes_out.push_back(note_off);       
     DEBUG_POST("Ending note %d global ts %d local ts %d",(*m_playing_notes.begin()).second, m_step_global, m_step);
     m_playing_notes.erase(m_playing_notes.begin());     
   }
   // One PPQ midi clock tick
   m_step_global++;
   
-  return notes_out;
+  return m_notes_out;
 }
 
 void MidiCycle::loop(int beats) {
@@ -169,10 +188,8 @@ void MidiCycle::loop(int beats) {
   } else {
     DEBUG_POST("loop starting");
     m_state = mcState::PLAYING;
-    m_num_beats = beats;
-    m_loop_len = (beats * PPQ);
     m_loop_end = m_step;
-    m_loop_start = (m_step - (m_loop_len) + m_max_length) % m_max_length;
+    m_loop_start = (m_step - (beats * PPQ) + m_max_length) % m_max_length;
     DEBUG_POST("loop start/end %d %d", m_loop_start, m_loop_end);
     m_step = m_loop_start;
     m_quantize_position = m_step;  
@@ -189,6 +206,4 @@ void MidiCycle::quantize(int division) {
     m_quantize_changed = true;
   }
 }
-
-
 }

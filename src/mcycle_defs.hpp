@@ -27,6 +27,8 @@ typedef long long global_step;
 // position inside a loop 
 typedef short local_step;
 
+// channel
+typedef short chan_id;
 
 //
 typedef std::pair <global_step, note_id> note_off_event;
