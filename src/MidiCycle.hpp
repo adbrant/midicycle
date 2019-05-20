@@ -20,7 +20,6 @@ public:
   void loop(int beats);
   // Quantize output to division 1-4, 0 is unquantized
   void quantize(int division);
-
   
   // Kill remaining notes
   timestep&  flush();
@@ -158,7 +157,14 @@ timestep& MidiCycle::tick(int tick) {
       m_step = m_loop_start;
       DEBUG_POST("loop looping");
     }
-  } else {
+  } else if (m_state == mcState::STOP){
+    // Keep stepping but dont play
+    m_step = (m_step + 1) % m_max_length;
+    if (m_step == m_loop_end) {
+      m_step = m_loop_start;
+      DEBUG_POST("loop looping");
+    }
+  } else if (m_state == mcState::EMPTY){
     // Clear this step
     // New notes will be commited later when they complete
     m_seq_recorder.clear_step((m_step + 1) % m_max_length);

@@ -32,35 +32,50 @@ void *multicycle_new(t_floatarg loopers) {
 
 void multicycle_free(t_multicycle *x) { delete x->x_multicycle; }
 
-void multicycle_note(t_multicycle *x, t_floatarg f1, t_floatarg f2) {
-  x->x_multicycle->note_event(unsigned(f1), unsigned(f2));
-}
 
-void multicycle_tick(t_multicycle *x, t_floatarg f1) {
-  auto &tstep = x->x_multicycle->tick(unsigned(f1));
+void play_notes(t_multicycle *x, mc_timestep & tstep) {
   
-  for (auto &notepair : tstep) {
+   for (auto &notepair : tstep) {
     // Output events
     auto note = notepair.second;
     int chan =  notepair.first;
     SETFLOAT(x->output_list, chan);
     SETFLOAT(x->output_list+1, note.note);
     SETFLOAT(x->output_list + 2, note.velocity);
-    outlet_list(x->notes_out, &s_list, 2, x->output_list);
-  }  
+    outlet_list(x->notes_out, &s_list, 3, x->output_list);
+  } 
+} 
+
+void multicycle_note(t_multicycle *x, t_floatarg f1, t_floatarg f2) {
+  auto &tstep = x->x_multicycle->note_event(unsigned(f1), unsigned(f2));
+    play_notes(x, tstep);
+}
+void multicycle_key(t_multicycle *x, t_floatarg f1, t_floatarg f2) {
+  auto &tstep = x->x_multicycle->key_event(unsigned(f1), unsigned(f2));
+  play_notes(x, tstep);
+}
+void multicycle_aux(t_multicycle *x, t_floatarg f1) {
+  x->x_multicycle->aux(unsigned(f1));
+}
+void multicycle_dest(t_multicycle *x, t_floatarg f1, t_floatarg f2) {
+  auto &tstep = x->x_multicycle->set_dest(unsigned(f1), unsigned(f2));
+  play_notes(x, tstep);
+}
+
+void multicycle_tick(t_multicycle *x, t_floatarg f1) {
+  auto &tstep = x->x_multicycle->tick(unsigned(f1));
+  
+  play_notes(x, tstep);
 }
 
 void multicycle_loop(t_multicycle *x, t_floatarg beats) {
-  //x->x_multicycle->loop(unsigned(beats));
+  x->x_multicycle->set_loop_length(unsigned(beats));
 }
 
 void multicycle_quantize(t_multicycle *x, t_floatarg division) {
-  //x->x_multicycle->quantize(unsigned(division));
+  x->x_multicycle->quantize(unsigned(division));
 }
 
-void multicycle_overdub(t_multicycle *x, t_floatarg odub) {
-  //x->x_multicycle->overdub(odub > 0.5);
-}
 
 void multicycle_setup(void) {
   multicycle_class = class_new(gensym("multicycle"), (t_newmethod)multicycle_new,
@@ -69,13 +84,20 @@ void multicycle_setup(void) {
   class_addbang(multicycle_class, multicycle_bang);
   class_addmethod(multicycle_class, (t_method)multicycle_note, gensym("note"),
                   A_DEFFLOAT, A_DEFFLOAT, 0);
+  class_addmethod(multicycle_class, (t_method)multicycle_key, gensym("key"),
+                  A_DEFFLOAT, A_DEFFLOAT, 0);
+  class_addmethod(multicycle_class, (t_method)multicycle_aux, gensym("aux"),
+                  A_DEFFLOAT, 0);                  
+  class_addmethod(multicycle_class, (t_method)multicycle_dest, gensym("dest"),
+                  A_DEFFLOAT,A_DEFFLOAT, 0);                  
   class_addmethod(multicycle_class, (t_method)multicycle_tick, gensym("tick"),
                   A_DEFFLOAT, 0);
   class_addmethod(multicycle_class, (t_method)multicycle_loop, gensym("loop"),
                   A_DEFFLOAT, 0);
+                  
+
   class_addmethod(multicycle_class, (t_method)multicycle_quantize,
                   gensym("quantize"), A_DEFFLOAT, 0);
-  class_addmethod(multicycle_class, (t_method)multicycle_overdub,
-                  gensym("overdub"), A_DEFFLOAT, 0);                  
+                 
 }
 }

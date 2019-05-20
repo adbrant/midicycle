@@ -14,7 +14,7 @@ public:
         // Create n midi loopers        
         for(int i = 0 ; i < num_channels; i ++){
           m_midicycles.emplace_back(max_length);
-          m_channels.push_back(0);
+          m_channel_dests.push_back(0);
         }
       }
   // Incoming note on/off from keyboard (used for control)
@@ -25,13 +25,19 @@ public:
   
   // PPQ ticks from MIDI clock, return note events with channels
   mc_timestep&  tick(int tick);
+  
+  // set dest for channel, return any note-offs
+  mc_timestep&  set_dest(int channel, int dest);
+  
   // Loop # of beats, or stop looping is arg is 0
   void loop(int mc_id, int beats){
     m_midicycles[mc_id].loop(beats);
   }
   // Quantize output to division 1-4, 0 is unquantized
-  void quantize(int mc_id, int division){
-    m_midicycles[mc_id].quantize(division);
+  void quantize(int division){
+    for( auto& mc : m_midicycles) {
+      mc.quantize(division);
+    }
   }
   
   void overdub(int mc_id, bool overdub) {
@@ -53,7 +59,7 @@ private:
   int m_active_channel;
   int m_loop_length;
   std::vector<MidiCycle> m_midicycles;
-  std::vector<int> m_channels;
+  std::vector<int> m_channel_dests;
   std::multiset<note_id> m_playing_notes;
   mc_timestep m_notes_out;
 };
@@ -90,23 +96,27 @@ mc_timestep& MultiCycle::key_event(note_id note, char velocity) {
         // loop, or if looping change overdub
         if( m_midicycles[m_active_channel].get_state() == mcState::EMPTY ) {
           m_midicycles[m_active_channel].loop(m_loop_length);
+          DEBUG_POST("loop channel %d len %d",mc_id,m_loop_length);
         } else {
           bool odub_state = !m_midicycles[m_active_channel].overdubbing();
           m_midicycles[m_active_channel].overdub(odub_state);
+          DEBUG_POST("odub channel %d %d",mc_id,odub_state);
         }
         
       } else {      
         // Flush channel held notes and switch 
         for( const note_id &pnote : m_playing_notes){
           noteEvent ne = {pnote, 0, 0};
-          m_notes_out.push_back({m_channels[m_active_channel],ne});
+          m_notes_out.push_back({m_channel_dests[m_active_channel],ne});
         }
+        DEBUG_POST("active channel %d ",mc_id);
         m_active_channel = mc_id;
       }
       
     } else if (note >= 72 && note <84)  {
       int mc_id = note-72;
       // Play/Stop
+      DEBUG_POST("play/stop channel %d",mc_id);
       m_midicycles[mc_id].playstop();
     }
     
@@ -114,6 +124,18 @@ mc_timestep& MultiCycle::key_event(note_id note, char velocity) {
   
   return m_notes_out;
 };
+
+mc_timestep& MultiCycle::set_dest(int channel, int dest) {
+
+  // Clear any previous notes
+  m_notes_out.clear();
+   
+  // TODO: flush  previous dest
+
+  m_channel_dests[channel] = dest;
+  
+  return m_notes_out;
+}
 
 mc_timestep& MultiCycle::tick(int tick) {
 
@@ -124,7 +146,7 @@ mc_timestep& MultiCycle::tick(int tick) {
   for(int mc_id = 0; mc_id <m_num_channels ; mc_id++){
     auto notes = m_midicycles[m_active_channel].tick(tick);
     for( auto note : notes){
-      m_notes_out.push_back({m_channels[mc_id],note});
+      m_notes_out.push_back({m_channel_dests[mc_id],note});
     }
   }
   
