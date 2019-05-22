@@ -11,6 +11,7 @@ typedef struct _multicycle {
   t_object x_obj;
   MultiCycle *x_multicycle;
   t_outlet *notes_out;
+  t_outlet *status_out;
   // channel note velocity
   t_atom output_list[3];
 } t_multicycle;
@@ -19,12 +20,13 @@ void multicycle_bang(t_multicycle *x) {
   post("Test");
   SETFLOAT(x->output_list, 2);
   SETFLOAT(x->output_list + 1, 3);
-  outlet_list(x->notes_out, &s_list, 2, x->output_list);
+  //outlet_list(x->notes_out, &s_list, 2, x->output_list);
 }
 
 void *multicycle_new(t_floatarg loopers) {
   t_multicycle *x = (t_multicycle *)pd_new(multicycle_class);
   x->notes_out = outlet_new(&x->x_obj, &s_list);
+  x->status_out = outlet_new(&x->x_obj, &s_symbol);
   x->x_multicycle = new MultiCycle(PPQ * 4 * 16,loopers);
 
   return (void *)x;
@@ -33,7 +35,7 @@ void *multicycle_new(t_floatarg loopers) {
 void multicycle_free(t_multicycle *x) { delete x->x_multicycle; }
 
 
-void play_notes(t_multicycle *x, mc_timestep & tstep) {
+void play_notes(t_multicycle *x, const mc_timestep & tstep) {
   
    for (auto &notepair : tstep) {
     // Output events
@@ -53,6 +55,9 @@ void multicycle_note(t_multicycle *x, t_floatarg f1, t_floatarg f2) {
 void multicycle_key(t_multicycle *x, t_floatarg f1, t_floatarg f2) {
   auto &tstep = x->x_multicycle->key_event(unsigned(f1), unsigned(f2));
   play_notes(x, tstep);
+  std::string & status = x->x_multicycle->get_status();
+
+  outlet_symbol(x->status_out, gensym(status.c_str()));
 }
 void multicycle_aux(t_multicycle *x, t_floatarg f1) {
   x->x_multicycle->aux(unsigned(f1));
@@ -63,8 +68,7 @@ void multicycle_dest(t_multicycle *x, t_floatarg f1, t_floatarg f2) {
 }
 
 void multicycle_tick(t_multicycle *x, t_floatarg f1) {
-  auto &tstep = x->x_multicycle->tick(unsigned(f1));
-  
+  auto &tstep = x->x_multicycle->tick(unsigned(f1));  
   play_notes(x, tstep);
 }
 

@@ -15,14 +15,14 @@ public:
   // Incoming note on/off to the record
   void note_event(note_id note, char velocity);
   // PPQ ticks from MIDI clock, return note events
-  timestep&  tick(int tick);
+  const timestep&  tick(int tick);
   // Loop # of beats, or stop looping is arg is 0
   void loop(int beats);
   // Quantize output to division 1-4, 0 is unquantized
   void quantize(int division);
   
   // Kill remaining notes
-  timestep&  flush();
+  const timestep&  flush();
   
   mcState get_state() { return m_state; }
   void playstop() {
@@ -97,8 +97,19 @@ void MidiCycle::note_event(note_id note, char velocity) {
     }
   }
 };
-
-timestep& MidiCycle::tick(int tick) {
+const timestep& MidiCycle::flush() {
+   // Clear any previous notes
+  m_notes_out.clear();
+  while (!m_playing_notes.empty()) {  
+    noteEvent note_off = { (*m_playing_notes.begin()).second, 0};
+    m_notes_out.push_back(note_off);       
+    DEBUG_POST("Flushing note %d global ts %d local ts %d",(*m_playing_notes.begin()).second, m_step_global, m_step);
+    m_playing_notes.erase(m_playing_notes.begin());     
+  }
+  
+  return m_notes_out;
+}
+const timestep& MidiCycle::tick(int tick) {
 
   // If we are playing, emit any note ons
   // If we are recording, clear this step

@@ -30,6 +30,11 @@
 #X msg 433 18 key 61 127;
 #X msg 389 57 key 72 127;
 #X msg 430 71 key 73 127;
+#X msg 418 97 dest 0 1;
+#X msg 416 133 dest 0 0;
+#X msg 481 86 dest 1 2;
+#X msg 481 121 dest 1 3;
+#X obj 170 234 print sym;
 #X connect 0 0 22 0;
 #X connect 1 0 22 0;
 #X connect 2 0 3 1;
@@ -53,7 +58,12 @@
 #X connect 20 0 22 0;
 #X connect 21 0 22 0;
 #X connect 22 0 11 0;
+#X connect 22 1 31 0;
 #X connect 23 0 22 0;
 #X connect 24 0 22 0;
 #X connect 25 0 22 0;
 #X connect 26 0 22 0;
+#X connect 27 0 22 0;
+#X connect 28 0 22 0;
+#X connect 29 0 22 0;
+#X connect 30 0 22 0;

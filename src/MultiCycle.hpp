@@ -1,6 +1,7 @@
 #pragma once
 #include "MidiCycle.hpp"
 #include <set>
+#include <string>
 namespace MCycle {
 
 typedef  std::vector < std::pair<chan_id, noteEvent>> mc_timestep;
@@ -18,16 +19,16 @@ public:
         }
       }
   // Incoming note on/off from keyboard (used for control)
-  mc_timestep& key_event(note_id note, char velocity);
+  const mc_timestep& key_event(note_id note, char velocity);
   
   // Incoming note on/off from MIDI
-  mc_timestep& note_event(note_id note, char velocity);
+  const mc_timestep& note_event(note_id note, char velocity);
   
   // PPQ ticks from MIDI clock, return note events with channels
-  mc_timestep&  tick(int tick);
+  const mc_timestep&  tick(int tick);
   
   // set dest for channel, return any note-offs
-  mc_timestep&  set_dest(int channel, int dest);
+  const mc_timestep&  set_dest(int channel, int dest);
   
   // Loop # of beats, or stop looping is arg is 0
   void loop(int mc_id, int beats){
@@ -52,6 +53,35 @@ public:
   }
   
   void set_active(int mc_id);
+  
+  std::string& get_status() {
+    m_status.clear();
+    for(int i = 0 ; i < m_num_channels; i ++) {
+      auto & mc = m_midicycles[i];
+      mcState state  = mc.get_state();
+      bool odub = mc.overdubbing();
+      bool active = i == m_active_channel;
+      if(state == mcState::EMPTY){
+        m_status+= active? "O" : "o";
+      } else if (state == mcState::PLAYING){
+        m_status+= active? "A" : ">";
+        
+      } else if (state == mcState::STOP){
+        m_status+= active? "a" : "|";
+        
+      }
+      /*     
+      o : empty
+      > : Playing
+      | : stopped
+      A : active playing
+      0 : active empty
+      a : active Stopped
+      */
+      
+    }
+    return m_status;
+  }
 private:
   int m_auxval;
   int m_max_length;
@@ -61,11 +91,12 @@ private:
   std::vector<MidiCycle> m_midicycles;
   std::vector<int> m_channel_dests;
   std::multiset<note_id> m_playing_notes;
+  std::string m_status;
   mc_timestep m_notes_out;
 };
 
 // Send note to active channel, also to outlet
-mc_timestep& MultiCycle::note_event(note_id note, char velocity) {
+const mc_timestep& MultiCycle::note_event(note_id note, char velocity) {
   // Clear any previous notes
   m_notes_out.clear();  
   // send to active mc
@@ -84,7 +115,7 @@ mc_timestep& MultiCycle::note_event(note_id note, char velocity) {
 };
 
 // Loop or play 
-mc_timestep& MultiCycle::key_event(note_id note, char velocity) {
+const mc_timestep& MultiCycle::key_event(note_id note, char velocity) {
   
   // Clear any previous notes
   m_notes_out.clear();
@@ -125,19 +156,23 @@ mc_timestep& MultiCycle::key_event(note_id note, char velocity) {
   return m_notes_out;
 };
 
-mc_timestep& MultiCycle::set_dest(int channel, int dest) {
+const mc_timestep& MultiCycle::set_dest(int channel, int dest) {
 
   // Clear any previous notes
   m_notes_out.clear();
-   
-  // TODO: flush  previous dest
-
-  m_channel_dests[channel] = dest;
-  
+  if(m_channel_dests[channel] != dest) {
+    //Flush  previous dest
+    DEBUG_POST("channel %d  dest %d flushing",channel,dest);
+    auto notes = m_midicycles[m_active_channel].flush();
+    for( auto note : notes){
+      m_notes_out.push_back({m_channel_dests[channel],note});
+    }
+    m_channel_dests[channel] = dest;
+  }
   return m_notes_out;
 }
 
-mc_timestep& MultiCycle::tick(int tick) {
+const mc_timestep& MultiCycle::tick(int tick) {
 
   // Clear any previous notes
   m_notes_out.clear();
