@@ -5,7 +5,7 @@
 
 
 namespace MCycle {
-
+typedef std::vector<std::unique_ptr<timestep>> sequence;
 /*
 SeqRecorder used to record midi notes into a buffer
 */
@@ -38,6 +38,7 @@ public:
 
   // Report memory consumed
   void print_usage() const;
+  
 
 private:
   int m_sequence_size;

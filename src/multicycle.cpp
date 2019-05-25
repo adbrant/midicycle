@@ -48,9 +48,9 @@ void play_notes(t_multicycle *x, const mc_timestep & tstep) {
   } 
 } 
 
-void multicycle_note(t_multicycle *x, t_floatarg f1, t_floatarg f2) {
-  auto &tstep = x->x_multicycle->note_event(unsigned(f1), unsigned(f2));
-    play_notes(x, tstep);
+void multicycle_note(t_multicycle *x, t_floatarg f1, t_floatarg f2, t_floatarg f3) {
+  auto &tstep = x->x_multicycle->note_event(unsigned(f1), unsigned(f2), unsigned(f3));
+  play_notes(x, tstep);
 }
 void multicycle_key(t_multicycle *x, t_floatarg f1, t_floatarg f2) {
   auto &tstep = x->x_multicycle->key_event(unsigned(f1), unsigned(f2));
@@ -64,6 +64,11 @@ void multicycle_aux(t_multicycle *x, t_floatarg f1) {
 }
 void multicycle_dest(t_multicycle *x, t_floatarg f1, t_floatarg f2) {
   auto &tstep = x->x_multicycle->set_dest(unsigned(f1), unsigned(f2));
+  play_notes(x, tstep);
+}
+
+void multicycle_src(t_multicycle *x, t_floatarg f1) {
+  auto &tstep = x->x_multicycle->set_src(unsigned(f1));
   play_notes(x, tstep);
 }
 
@@ -87,13 +92,15 @@ void multicycle_setup(void) {
                               CLASS_DEFAULT,A_DEFFLOAT, (t_atomtype)0);
   class_addbang(multicycle_class, multicycle_bang);
   class_addmethod(multicycle_class, (t_method)multicycle_note, gensym("note"),
-                  A_DEFFLOAT, A_DEFFLOAT, 0);
+                  A_DEFFLOAT, A_DEFFLOAT,A_DEFFLOAT, 0);
   class_addmethod(multicycle_class, (t_method)multicycle_key, gensym("key"),
                   A_DEFFLOAT, A_DEFFLOAT, 0);
   class_addmethod(multicycle_class, (t_method)multicycle_aux, gensym("aux"),
                   A_DEFFLOAT, 0);                  
   class_addmethod(multicycle_class, (t_method)multicycle_dest, gensym("dest"),
-                  A_DEFFLOAT,A_DEFFLOAT, 0);                  
+                  A_DEFFLOAT,A_DEFFLOAT, 0);
+  class_addmethod(multicycle_class, (t_method)multicycle_src, gensym("src"),
+                  A_DEFFLOAT, 0);                       
   class_addmethod(multicycle_class, (t_method)multicycle_tick, gensym("tick"),
                   A_DEFFLOAT, 0);
   class_addmethod(multicycle_class, (t_method)multicycle_loop, gensym("loop"),

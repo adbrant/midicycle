@@ -3,6 +3,13 @@
 
 namespace MCycle {
 enum class mcState { EMPTY,PLAYING,STOP };
+//
+typedef std::pair <global_step, note_id> note_off_event;
+struct noteOnInfo {
+  char velocity;
+  global_step start_global;
+  local_step start_local;
+};
 class MidiCycle {
 public:
   MidiCycle(int max_length)

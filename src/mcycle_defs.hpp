@@ -30,14 +30,6 @@ typedef short local_step;
 // channel
 typedef short chan_id;
 
-//
-typedef std::pair <global_step, note_id> note_off_event;
-
-struct noteOnInfo {
-  char velocity;
-  global_step start_global;
-  local_step start_local;
-};
 
 struct noteEvent {
   char note;
@@ -46,5 +38,5 @@ struct noteEvent {
 };
 
 typedef std::vector<noteEvent> timestep;
-typedef std::vector<std::unique_ptr<timestep>> sequence;
+
 }
