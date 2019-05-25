@@ -22,4 +22,7 @@ PDLIBBUILDER_DIR=pd-lib-builder/
 include $(PDLIBBUILDER_DIR)/Makefile.pdlibbuilder
 
 
-    
+test: ./src/*.cpp ./src/*.hpp
+	g++ -std=c++14 -DTEST -Isrc src/SeqRecorder.cpp -o test 
+	./test | grep 'Done'
+	

@@ -1,6 +1,6 @@
 
 test: *.cpp *.hpp
-	g++ -std=c++14 -DTEST SeqRecorder.cpp -o test 
+	g++ -std=c++14 -DTEST -I./ SeqRecorder.cpp -o test 
 	./test | grep 'Done'
 	
 clean:

@@ -35,6 +35,11 @@ struct noteEvent {
   char note;
   char velocity;
   local_step duration;
+  template<class Archive>
+  void serialize(Archive & archive)
+  {
+    archive( note, velocity, duration ); // serialize things by passing them to the archive
+  }
 };
 
 typedef std::vector<noteEvent> timestep;

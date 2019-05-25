@@ -1,4 +1,7 @@
 #include "SeqRecorder.hpp"
+#include <cereal/archives/json.hpp>
+#include <cereal/archives/binary.hpp>
+#include <fstream>
 
 using namespace MCycle;
 
@@ -43,18 +46,57 @@ int main() {
 
   int steps = 24 * 4 * 64 * 64;
   SeqRecorder record = SeqRecorder(steps);
-
+  noteEvent n;
   for (int step = 0; step < 20000; step++) {
-
-    noteEvent n;
     record.clear_step(step % steps);
     if (rand() % 256 < 8) {
       record.add_note(rand() % steps, n);
     }
+    n.note++;
   }
-  record.print_usage();
-  
-  
+  {
+    record.print_usage();
+    std::ofstream os("data.json");
+    assert(os);
+    cereal::JSONOutputArchive  archive(os);
+    archive(record);
+  }
+  {
+    record.print_usage();
+    std::ofstream os("data.bin",std::ios::binary);
+    assert(os);
+    cereal::BinaryOutputArchive  archive(os);
+    archive(record);
+  }  
+  {
+    std::ifstream is("data.json");
+    assert(is);
+    cereal::JSONInputArchive  archive(is);
+    archive(record);
+    record.print_usage();
+  }
+  {
+    record.print_usage();
+    std::ofstream os("data2.json");
+    assert(os);
+    cereal::JSONOutputArchive  archive(os);
+    archive(record);
+  }
+  SeqRecorder record2(steps);  
+  {
+
+    std::ifstream is("data.bin",std::ios::binary);
+    assert(is);
+    cereal::BinaryInputArchive  archive(is);
+    archive(record2);
+    record2.print_usage();
+  }  
+  {
+    std::ofstream os("data2.bin",std::ios::binary);
+    assert(os);
+    cereal::BinaryOutputArchive  archive(os);
+    archive(record2);
+  }
   printf("Done\n");
   return 0;
 }

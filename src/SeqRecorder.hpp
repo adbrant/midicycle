@@ -1,5 +1,5 @@
 #pragma once
-
+#include <cereal/access.hpp>
 #include "mcycle_defs.hpp"
 #include <assert.h>
 
@@ -10,6 +10,7 @@ typedef std::vector<std::unique_ptr<timestep>> sequence;
 SeqRecorder used to record midi notes into a buffer
 */
 class SeqRecorder {
+friend class cereal::access;
 public:
   SeqRecorder(int sequence_size, int empty_reserve = 32, int note_reserve = 8)
       : m_sequence_size{sequence_size}, m_note_reserve{note_reserve},
@@ -39,7 +40,47 @@ public:
   // Report memory consumed
   void print_usage() const;
   
+  template<class Archive>
+  void save(Archive & archive) const
+  {
+    archive( m_sequence_size);
+    long long num_notes = 0;    
+    for(int i = 0 ; i < m_sequence_size; i++ ){
+      if(m_sequence_data[i]){
+        timestep ts = *m_sequence_data[i];
+        for(auto & note : ts){
+          num_notes++;
+        }
+      }
+    }
+    archive( num_notes);
+    num_notes = 0;
+    for(int i = 0 ; i < m_sequence_size; i++ ){
+      if(m_sequence_data[i]){
+        timestep ts = *m_sequence_data[i];
+        for(auto & note : ts){
+          archive(i,note );
+          num_notes++;
+          
+        }
+      }
+    }    
+  }
 
+  template<class Archive>
+  void load(Archive & archive)
+  {
+    archive( m_sequence_size );
+    long long num_notes;
+    archive( num_notes );
+    m_sequence_data = sequence(m_sequence_size);
+    for(int i = 0 ; i < num_notes; i++ ){
+      noteEvent note;
+      int step;
+      archive(step,note);
+      add_note(step, note);
+    }     
+  }
 private:
   int m_sequence_size;
   int m_note_reserve;
