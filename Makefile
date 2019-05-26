@@ -13,7 +13,7 @@ common.sources = src/SeqRecorder.cpp
 # all extra files to be included in binary distribution of the library
 datafiles = readme
 
-cflags = -std=c++14 -Wno-unused-parameter
+cflags = -std=c++14 -Wno-unused-parameter -Isrc
 CC = g++
 
 
@@ -26,3 +26,5 @@ test: ./src/*.cpp ./src/*.hpp
 	g++ -std=c++14 -DTEST -Isrc src/SeqRecorder.cpp -o test 
 	./test | grep 'Done'
 	
+catch: 	./src/*.cpp ./src/*.hpp
+	g++ -std=c++14 -DTEST -Isrc src/tests.cpp src/SeqRecorder.cpp -o catch 	

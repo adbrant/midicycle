@@ -1,6 +1,7 @@
 #include "MidiCycle.hpp"
 #include "m_pd.h"
-
+#include <cereal/archives/binary.hpp>
+#include <fstream>
 // Pure data external interface definition
 using namespace MCycle;
 extern "C" {
@@ -57,6 +58,26 @@ void midicycle_overdub(t_midicycle *x, t_floatarg odub) {
   x->x_midicycle->overdub(odub > 0.5);
 }
 
+
+void midicycle_save(t_midicycle *x, t_symbol *file) {
+  
+  std::ofstream os(file->s_name,std::ios::binary);
+  if(os){
+    cereal::BinaryOutputArchive  archive(os);
+    archive(*(x->x_midicycle));
+  }
+}
+
+
+void midicycle_load(t_midicycle *x,t_symbol *file) {
+  std::ifstream is(file->s_name,std::ios::binary);
+  if(is){
+    cereal::BinaryInputArchive  archive(is);
+    archive(*(x->x_midicycle));
+  }
+}
+
+
 void midicycle_setup(void) {
   midicycle_class = class_new(gensym("midicycle"), (t_newmethod)midicycle_new,
                               (t_method)midicycle_free, sizeof(t_midicycle),
@@ -71,6 +92,10 @@ void midicycle_setup(void) {
   class_addmethod(midicycle_class, (t_method)midicycle_quantize,
                   gensym("quantize"), A_DEFFLOAT, 0);
   class_addmethod(midicycle_class, (t_method)midicycle_overdub,
-                  gensym("overdub"), A_DEFFLOAT, 0);                  
+                  gensym("overdub"), A_DEFFLOAT, 0);     
+  class_addmethod(midicycle_class, (t_method)midicycle_save,
+                  gensym("save"), A_DEFSYMBOL, 0);
+  class_addmethod(midicycle_class, (t_method)midicycle_load,
+                  gensym("load"), A_DEFSYMBOL, 0);                  
 }
 }

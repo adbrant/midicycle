@@ -1,6 +1,6 @@
 #pragma once
 #include "SeqRecorder.hpp"
-
+#include <cereal/access.hpp>
 namespace MCycle {
 enum class mcState { EMPTY,PLAYING,STOP };
 //
@@ -11,6 +11,7 @@ struct noteOnInfo {
   local_step start_local;
 };
 class MidiCycle {
+friend class cereal::access;
 public:
   MidiCycle(int max_length)
       : m_seq_recorder(max_length), m_state{mcState::EMPTY}, m_step{0},
@@ -45,7 +46,13 @@ public:
   bool overdubbing(){
     return m_overdub;
   }
-  
+  template<class Archive>
+  void serialize(Archive & archive)
+  {
+    archive( m_seq_recorder, m_state, m_step,m_step_global,
+    m_max_length,m_loop_start,m_loop_end,m_quantize_position,m_quantize,m_quantize_changed
+    ); // serialize things by passing them to the archive
+  }  
 private:
   
 
@@ -60,7 +67,6 @@ private:
   std::multimap<global_step, note_id> m_playing_notes;
   int m_loop_start;
   int m_loop_end;
-  int m_loop_len;
   int m_quantize_position;
   int m_quantize;
   bool m_quantize_changed;
@@ -72,7 +78,7 @@ void MidiCycle::note_event(note_id note, char velocity) {
   // Takes note on and off events
   // Once they are complete, write to the note recorder
   if (note < 0 or velocity < 0) {
-    post("MidiCycle: Invalid note");
+    DEBUG_POST("MidiCycle: Invalid note");
     return;
   }
 
@@ -93,7 +99,7 @@ void MidiCycle::note_event(note_id note, char velocity) {
 
       // print warning if note is too long for short
       if (duration < 0) {
-        post("MidiCycle: Note duration truncated");
+        DEBUG_POST("MidiCycle: Note duration truncated");
         duration = PPQ;
       }
       DEBUG_POST("Adding note %d duration %d local timestep %d",note, duration, note_on_info.start_local);
@@ -223,7 +229,7 @@ void MidiCycle::loop(int beats) {
 void MidiCycle::quantize(int division) {
   // if beats > 0 start looping, else start recording again
   if (division < 0 or division > 4) {
-    post("MidiCyle: invalid division");
+    DEBUG_POST("MidiCyle: invalid division");
   } else {    
     m_quantize = division;
     // reset playback

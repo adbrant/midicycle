@@ -41,7 +41,8 @@ void SeqRecorder::print_usage() const {
   printf("Total in Empty = %d\n", total);
 }
 
-#ifdef TEST
+#ifdef TEST 
+/*
 int main() {
 
   int steps = 24 * 4 * 64 * 64;
@@ -100,4 +101,5 @@ int main() {
   printf("Done\n");
   return 0;
 }
+*/
 #endif
