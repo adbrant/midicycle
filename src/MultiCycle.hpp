@@ -18,7 +18,7 @@ public:
         // Create n midi loopers        
         for(int i = 0 ; i < num_channels; i ++){
           m_midicycles.emplace_back(max_length);
-          m_channel_dests.push_back(0);
+          m_channel_dests.push_back(1);
         }
       }
   // Incoming note on/off from keyboard (used for control)
