@@ -2,15 +2,18 @@
 #include "MidiCycle.hpp"
 #include <set>
 #include <string>
+#include <cereal/access.hpp>
+#include <cereal/types/vector.hpp>
 namespace MCycle {
 
 typedef  std::vector < std::pair<chan_id, noteEvent>> mc_timestep;
 
 
 class MultiCycle {
+friend class cereal::access;
 public:
   MultiCycle(int max_length, int num_channels)
-      :  m_auxval(0),m_max_length{max_length}, m_num_channels{num_channels}, m_active_channel{0},m_loop_length{1}, m_midi_src(0), m_midicycles(),  m_playing_notes(), m_notes_out()
+      :  m_auxval(0),m_max_length{max_length},m_num_channels{num_channels}, m_active_channel{0},m_loop_length{0},  m_midi_src(0), m_midicycles(),  m_playing_notes(), m_notes_out()
       { 
         // Create n midi loopers        
         for(int i = 0 ; i < num_channels; i ++){
@@ -59,6 +62,13 @@ public:
   
   std::string& get_status();
   
+  template<class Archive>
+  void serialize(Archive & archive)
+  {
+
+    archive( m_max_length,m_num_channels,m_loop_length, m_midicycles,m_channel_dests, m_active_channel,m_midi_src); // serialize things by passing them to the archive
+  }   
+  
 private:
   int m_auxval;
   int m_max_length;
@@ -79,7 +89,6 @@ std::string& MultiCycle::get_status() {
   for(int i = 0 ; i < m_num_channels; i ++) {
     auto & mc = m_midicycles[i];
     mcState state  = mc.get_state();
-    bool odub = mc.overdubbing();
     bool active = i == m_active_channel;
     if(state == mcState::EMPTY){
       m_status+= active? "O" : "o";

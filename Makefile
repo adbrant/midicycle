@@ -8,7 +8,7 @@ lib.name = midicycle
 # input source file (class name == source file basename)
 class.sources = src/midicycle.cpp src/multicycle.cpp
 
-common.sources = src/SeqRecorder.cpp 
+common.sources = src/SeqRecorder.cpp  
 
 # all extra files to be included in binary distribution of the library
 datafiles = readme

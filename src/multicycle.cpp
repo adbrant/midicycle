@@ -1,7 +1,8 @@
 
 #include "MultiCycle.hpp"
 #include "m_pd.h"
-
+#include <fstream>
+#include <cereal/archives/binary.hpp>
 // Pure data external interface definition
 using namespace MCycle;
 extern "C" {
@@ -85,6 +86,24 @@ void multicycle_quantize(t_multicycle *x, t_floatarg division) {
   x->x_multicycle->quantize(unsigned(division));
 }
 
+void multicycle_save(t_multicycle *x, t_symbol *file) {
+  
+  std::ofstream os(file->s_name,std::ios::binary);
+  if(os){
+    cereal::BinaryOutputArchive  archive(os);
+    archive(*(x->x_multicycle));
+  }
+}
+
+
+void multicycle_load(t_multicycle *x,t_symbol *file) {
+  std::ifstream is(file->s_name,std::ios::binary);
+  if(is){
+    cereal::BinaryInputArchive  archive(is);
+    archive(*(x->x_multicycle));
+  }
+}
+
 
 void multicycle_setup(void) {
   multicycle_class = class_new(gensym("multicycle"), (t_newmethod)multicycle_new,
@@ -109,6 +128,9 @@ void multicycle_setup(void) {
 
   class_addmethod(multicycle_class, (t_method)multicycle_quantize,
                   gensym("quantize"), A_DEFFLOAT, 0);
-                 
+  class_addmethod(multicycle_class, (t_method)multicycle_save,
+                  gensym("save"), A_DEFSYMBOL, 0);
+  class_addmethod(multicycle_class, (t_method)multicycle_load,
+                  gensym("load"), A_DEFSYMBOL, 0);                    
 }
 }

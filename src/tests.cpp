@@ -4,6 +4,7 @@
 
 #include "SeqRecorder.hpp"
 #include "MidiCycle.hpp"
+#include "MultiCycle.hpp"
 #include <cereal/archives/json.hpp>
 #include <cereal/archives/binary.hpp>
 #include <fstream>
@@ -125,6 +126,71 @@ TEST_CASE("MidiCycle usage and serialization", "[MidiCycle]"){
   }  
   {
     std::ofstream os("data2mc.bin",std::ios::binary);
+    assert(os);
+    cereal::BinaryOutputArchive  archive(os);
+    archive(mc2);
+  }
+  printf("Done\n");
+}
+
+
+
+TEST_CASE("MultiCycle usage and serialization", "[MultiCycle]"){
+  
+  int steps = 24 * 4 * 64 * 64;
+  MultiCycle mc = MultiCycle(steps,12);
+  noteEvent n;
+  bool note_playing = false ;
+  int note = 0;
+  for (int step = 0; step < 20000; step++) {
+    mc.tick(step%24);
+    
+    if(rand() % 256 < 8) {
+      if (!note_playing ) {
+        note = rand()% 127;
+        mc.note_event(1,note, 127);
+        note_playing = true;
+      } else {
+        note_playing = false;
+        mc.note_event(1,note, 0);
+      }
+
+     }
+  }
+  {
+    std::ofstream os("datamuc.json");
+    assert(os);
+    cereal::JSONOutputArchive  archive(os);
+    archive(mc);
+  }
+  {
+    std::ofstream os("datamuc.bin",std::ios::binary);
+    assert(os);
+    cereal::BinaryOutputArchive  archive(os);
+    archive(mc);
+  }  
+  {
+    std::ifstream is("datamuc.json");
+    assert(is);
+    cereal::JSONInputArchive  archive(is);
+    archive(mc);
+  }
+  {
+    std::ofstream os("data2muc.json");
+    assert(os);
+    cereal::JSONOutputArchive  archive(os);
+    archive(mc);
+  }
+  MultiCycle mc2 = MultiCycle(steps, 12);
+  {
+
+    std::ifstream is("datamuc.bin",std::ios::binary);
+    assert(is);
+    cereal::BinaryInputArchive  archive(is);
+    archive(mc2);
+  }  
+  {
+    std::ofstream os("data2muc.bin",std::ios::binary);
     assert(os);
     cereal::BinaryOutputArchive  archive(os);
     archive(mc2);

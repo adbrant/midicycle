@@ -3,3 +3,6 @@
 *.o
 test
 *.pd_linux
+*.json
+*.bin
+datamc.bin

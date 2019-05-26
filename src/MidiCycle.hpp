@@ -13,7 +13,7 @@ struct noteOnInfo {
 class MidiCycle {
 friend class cereal::access;
 public:
-  MidiCycle(int max_length)
+  MidiCycle(int max_length=12)
       : m_seq_recorder(max_length), m_state{mcState::EMPTY}, m_step{0},
         m_step_global{0}, m_max_length{max_length}, m_held_notes(),
         m_playing_notes(), m_quantize(0), m_quantize_changed(false), m_overdub(false),m_notes_out(){}
