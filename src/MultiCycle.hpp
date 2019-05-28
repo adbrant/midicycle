@@ -52,6 +52,11 @@ public:
   }
   
   void aux(int auxval){
+    if (m_midi_src == -1 ) {
+      if(auxval == 1 and m_auxval == 0){
+        flush_playing();
+      }
+    }
     m_auxval = auxval;
   }
   void set_loop_length(int length){
@@ -81,6 +86,12 @@ private:
   std::multiset<note_id> m_playing_notes;
   std::string m_status;
   mc_timestep m_notes_out;
+  void flush_playing(){
+    for( const note_id &pnote : m_playing_notes){
+      m_midicycles[m_active_channel].note_event(pnote,0);
+    }   
+    m_playing_notes.clear();  
+  }
 };
 
 
@@ -139,8 +150,9 @@ const mc_timestep& MultiCycle::key_event(note_id note, char velocity) {
   
   // Clear any previous notes
   m_notes_out.clear();
-  
-  if(velocity > 0){
+  if(m_midi_src == -1 && m_auxval  == 0){
+    note_event(-1, note, velocity);
+  } else if(velocity > 0){
     if(note >= 60 && note < 72){
       int mc_id = note-60;
       if(mc_id == m_active_channel) {
@@ -156,10 +168,7 @@ const mc_timestep& MultiCycle::key_event(note_id note, char velocity) {
         
       } else {      
         // Flush channel held notes and switch 
-        for( const note_id &pnote : m_playing_notes){
-          noteEvent ne = {pnote, 0, 0};
-          m_notes_out.push_back({m_channel_dests[m_active_channel],ne});
-        }
+        flush_playing();
         DEBUG_POST("active channel %d ",mc_id);
         m_active_channel = mc_id;
       }
@@ -171,7 +180,7 @@ const mc_timestep& MultiCycle::key_event(note_id note, char velocity) {
       m_midicycles[mc_id].playstop();
     } 
   }
-  
+
   return m_notes_out;
 };
 
@@ -180,6 +189,7 @@ const mc_timestep& MultiCycle::set_src(int channel) {
 
   // Clear any previous notes
   m_notes_out.clear();
+  flush_playing();
   m_midi_src = channel;
   return m_notes_out;
 }

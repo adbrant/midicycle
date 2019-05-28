@@ -27,4 +27,6 @@ test: ./src/*.cpp ./src/*.hpp
 	./test | grep 'Done'
 	
 catch: 	./src/*.cpp ./src/*.hpp
-	g++ -std=c++14 -DTEST -Isrc src/tests.cpp src/SeqRecorder.cpp -o catch 	
+	g++ -std=c++14 -DTEST -Isrc src/tests.cpp src/SeqRecorder.cpp -o catch
+	./catch
+ 	
