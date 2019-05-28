@@ -116,10 +116,11 @@ void multicycle_setup(void) {
                   A_DEFFLOAT, A_DEFFLOAT, 0);
   class_addmethod(multicycle_class, (t_method)multicycle_aux, gensym("aux"),
                   A_DEFFLOAT, 0);                  
+  class_addmethod(multicycle_class, (t_method)multicycle_src, gensym("src"),
+                  A_DEFFLOAT, 0);    
   class_addmethod(multicycle_class, (t_method)multicycle_dest, gensym("dest"),
                   A_DEFFLOAT,A_DEFFLOAT, 0);
-  class_addmethod(multicycle_class, (t_method)multicycle_src, gensym("src"),
-                  A_DEFFLOAT, 0);                       
+                   
   class_addmethod(multicycle_class, (t_method)multicycle_tick, gensym("tick"),
                   A_DEFFLOAT, 0);
   class_addmethod(multicycle_class, (t_method)multicycle_loop, gensym("loop"),

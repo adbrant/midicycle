@@ -35,6 +35,17 @@
 #X msg 72 24 note 1 75 127;
 #X msg 155 7 note 1 72 0;
 #X msg 133 50 note 1 75 0;
+#X obj 14 158 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 1
+1;
+#X msg 14 178 aux \$1;
+#X msg 22 250 src -1;
+#X msg 24 293 src 1;
+#X msg 259 290 key 60 127;
+#X msg 271 314 key 63 127;
+#X msg 349 282 key 60 0;
+#X msg 359 311 key 63 0;
+#X msg 438 275 key 72 127;
+#X msg 526 271 key 72 0;
 #X connect 0 0 18 0;
 #X connect 1 0 2 1;
 #X connect 2 0 3 0;
@@ -67,3 +78,13 @@
 #X connect 29 0 18 0;
 #X connect 30 0 18 0;
 #X connect 31 0 18 0;
+#X connect 32 0 33 0;
+#X connect 33 0 18 0;
+#X connect 34 0 18 0;
+#X connect 35 0 18 0;
+#X connect 36 0 18 0;
+#X connect 37 0 18 0;
+#X connect 38 0 18 0;
+#X connect 39 0 18 0;
+#X connect 40 0 18 0;
+#X connect 41 0 18 0;

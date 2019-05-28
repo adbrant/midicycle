@@ -13,7 +13,7 @@ class MultiCycle {
 friend class cereal::access;
 public:
   MultiCycle(int max_length, int num_channels)
-      :  m_auxval(0),m_max_length{max_length},m_num_channels{num_channels}, m_active_channel{0},m_loop_length{0},  m_midi_src(0), m_midicycles(),  m_playing_notes(), m_notes_out()
+      :  m_auxval(0),m_max_length{max_length},m_num_channels{num_channels}, m_active_channel{0},m_loop_length{1},  m_midi_src(0), m_midicycles(),  m_playing_notes(), m_notes_out()
       { 
         // Create n midi loopers        
         for(int i = 0 ; i < num_channels; i ++){
@@ -151,6 +151,7 @@ const mc_timestep& MultiCycle::key_event(note_id note, char velocity) {
   // Clear any previous notes
   m_notes_out.clear();
   if(m_midi_src == -1 && m_auxval  == 0){
+    
     note_event(-1, note, velocity);
   } else if(velocity > 0){
     if(note >= 60 && note < 72){
@@ -160,10 +161,6 @@ const mc_timestep& MultiCycle::key_event(note_id note, char velocity) {
         if( m_midicycles[m_active_channel].get_state() == mcState::EMPTY ) {
           m_midicycles[m_active_channel].loop(m_loop_length);
           DEBUG_POST("loop channel %d len %d",mc_id,m_loop_length);
-        } else {
-          bool odub_state = !m_midicycles[m_active_channel].overdubbing();
-          m_midicycles[m_active_channel].overdub(odub_state);
-          DEBUG_POST("odub channel %d %d",mc_id,odub_state);
         }
         
       } else {      
@@ -190,6 +187,7 @@ const mc_timestep& MultiCycle::set_src(int channel) {
   // Clear any previous notes
   m_notes_out.clear();
   flush_playing();
+  DEBUG_POST("src %d",channel);
   m_midi_src = channel;
   return m_notes_out;
 }
