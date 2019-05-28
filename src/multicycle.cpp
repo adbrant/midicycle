@@ -69,7 +69,7 @@ void multicycle_dest(t_multicycle *x, t_floatarg f1, t_floatarg f2) {
 }
 
 void multicycle_src(t_multicycle *x, t_floatarg f1) {
-  auto &tstep = x->x_multicycle->set_src(unsigned(f1));
+  auto &tstep = x->x_multicycle->set_src(signed(f1));
   play_notes(x, tstep);
 }
 
