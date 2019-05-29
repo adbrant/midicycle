@@ -50,40 +50,40 @@ void play_notes(t_multicycle *x, const mc_timestep & tstep) {
 } 
 
 void multicycle_note(t_multicycle *x, t_floatarg f1, t_floatarg f2, t_floatarg f3) {
-  auto &tstep = x->x_multicycle->note_event(unsigned(f1), unsigned(f2), unsigned(f3));
+  auto &tstep = x->x_multicycle->note_event(int(f1), int(f2), int(f3));
   play_notes(x, tstep);
 }
 void multicycle_key(t_multicycle *x, t_floatarg f1, t_floatarg f2) {
-  auto &tstep = x->x_multicycle->key_event(unsigned(f1), unsigned(f2));
+  auto &tstep = x->x_multicycle->key_event(int(f1), int(f2));
   play_notes(x, tstep);
   std::string & status = x->x_multicycle->get_status();
 
   outlet_symbol(x->status_out, gensym(status.c_str()));
 }
 void multicycle_aux(t_multicycle *x, t_floatarg f1) {
-  x->x_multicycle->aux(unsigned(f1));
+  x->x_multicycle->aux(int(f1));
 }
 void multicycle_dest(t_multicycle *x, t_floatarg f1, t_floatarg f2) {
-  auto &tstep = x->x_multicycle->set_dest(unsigned(f1), unsigned(f2));
+  auto &tstep = x->x_multicycle->set_dest(int(f1), int(f2));
   play_notes(x, tstep);
 }
 
 void multicycle_src(t_multicycle *x, t_floatarg f1) {
-  auto &tstep = x->x_multicycle->set_src(signed(f1));
+  auto &tstep = x->x_multicycle->set_src(int(f1));
   play_notes(x, tstep);
 }
 
 void multicycle_tick(t_multicycle *x, t_floatarg f1) {
-  auto &tstep = x->x_multicycle->tick(unsigned(f1));  
+  auto &tstep = x->x_multicycle->tick(int(f1));  
   play_notes(x, tstep);
 }
 
 void multicycle_loop(t_multicycle *x, t_floatarg beats) {
-  x->x_multicycle->set_loop_length(unsigned(beats));
+  x->x_multicycle->set_loop_length(int(beats));
 }
 
 void multicycle_quantize(t_multicycle *x, t_floatarg division) {
-  x->x_multicycle->quantize(unsigned(division));
+  x->x_multicycle->quantize(int(division));
 }
 
 void multicycle_save(t_multicycle *x, t_symbol *file) {
