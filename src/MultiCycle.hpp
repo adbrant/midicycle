@@ -140,7 +140,7 @@ const mc_timestep& MultiCycle::note_event(int channel, note_id note, char veloci
     } else {
       m_playing_notes.erase(note);
     }
-    m_notes_out.push_back({m_active_channel,ne});
+    m_notes_out.push_back({m_channel_dests[m_active_channel],ne});
   }
   return m_notes_out;
 };
