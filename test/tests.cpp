@@ -89,7 +89,7 @@ TEST_CASE("MidiCycle usage and serialization", "[MidiCycle]"){
         note_playing = false;
         mc.note_event(note, 0);
       }
-
+ 
      }
   }
   {

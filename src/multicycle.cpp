@@ -42,6 +42,7 @@ void play_notes(t_multicycle *x, const mc_timestep & tstep) {
     // Output events
     auto note = notepair.second;
     int chan =  notepair.first;
+    post("Playing note %d %d %d",chan,note.note, note.velocity);
     SETFLOAT(x->output_list, chan);
     SETFLOAT(x->output_list+1, note.note);
     SETFLOAT(x->output_list + 2, note.velocity);

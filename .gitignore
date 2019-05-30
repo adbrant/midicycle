@@ -1,7 +1,6 @@
 *.exe
 *.dll
 *.o
-test
 *.pd_linux
 *.json
 *.bin
