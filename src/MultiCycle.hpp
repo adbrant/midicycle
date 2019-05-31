@@ -215,7 +215,7 @@ const mc_timestep& MultiCycle::tick(int tick) {
   
   // Get active notes from all mcs
   for(int mc_id = 0; mc_id <m_num_channels ; mc_id++){
-    auto notes = m_midicycles[m_active_channel].tick(tick);
+    auto notes = m_midicycles[mc_id].tick(tick);
     for( auto note : notes){
       m_notes_out.push_back({m_channel_dests[mc_id],note});
     }
