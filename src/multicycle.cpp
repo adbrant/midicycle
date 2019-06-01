@@ -36,10 +36,11 @@ void *multicycle_new(t_floatarg loopers) {
 void multicycle_free(t_multicycle *x) { delete x->x_multicycle; }
 
 
-void play_notes(t_multicycle *x, const mc_timestep & tstep) {
+void play_notes(t_multicycle *x) {
   
-   for (auto &notepair : tstep) {
+   while (x->x_multicycle->notesready()) {
     // Output events
+    auto notepair = x->x_multicycle->popnote();
     auto note = notepair.second;
     int chan =  notepair.first;
     SETFLOAT(x->output_list, chan);
@@ -50,12 +51,12 @@ void play_notes(t_multicycle *x, const mc_timestep & tstep) {
 } 
 
 void multicycle_note(t_multicycle *x, t_floatarg f1, t_floatarg f2, t_floatarg f3) {
-  auto &tstep = x->x_multicycle->note_event(int(f1), int(f2), int(f3));
-  play_notes(x, tstep);
+  x->x_multicycle->note_event(int(f1), int(f2), int(f3));
+  play_notes(x);
 }
 void multicycle_key(t_multicycle *x, t_floatarg f1, t_floatarg f2) {
-  auto &tstep = x->x_multicycle->key_event(int(f1), int(f2));
-  play_notes(x, tstep);
+  x->x_multicycle->key_event(int(f1), int(f2));
+  play_notes(x);
   auto & status = x->x_multicycle->get_status();
 
   for(int i = 0; i < status.size() / 2 ; i++ ){
@@ -73,18 +74,18 @@ void multicycle_aux(t_multicycle *x, t_floatarg f1) {
   x->x_multicycle->aux(int(f1));
 }
 void multicycle_dest(t_multicycle *x, t_floatarg f1, t_floatarg f2) {
-  auto &tstep = x->x_multicycle->set_dest(int(f1), int(f2));
-  play_notes(x, tstep);
+  x->x_multicycle->set_dest(int(f1), int(f2));
+  play_notes(x);
 }
 
 void multicycle_src(t_multicycle *x, t_floatarg f1) {
-  auto &tstep = x->x_multicycle->set_src(int(f1));
-  play_notes(x, tstep);
+  x->x_multicycle->set_src(int(f1));
+  play_notes(x);
 }
 
 void multicycle_tick(t_multicycle *x, t_floatarg f1) {
-  auto &tstep = x->x_multicycle->tick(int(f1));  
-  play_notes(x, tstep);
+  x->x_multicycle->tick(int(f1));  
+  play_notes(x);
 }
 
 void multicycle_loop(t_multicycle *x, t_floatarg beats) {
