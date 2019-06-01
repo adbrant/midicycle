@@ -48,7 +48,7 @@ public:
   }
   
   void overdub(int mc_id, bool overdub) {
-    if(mc_id = -1) { 
+    if(mc_id == -1) { 
       for ( auto & mc : m_midicycles){
         mc.overdub(overdub);
       }
