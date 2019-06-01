@@ -82,6 +82,10 @@ void multicycle_tick(t_multicycle *x, t_floatarg f1) {
 void multicycle_loop(t_multicycle *x, t_floatarg beats) {
   x->x_multicycle->set_loop_length(int(beats));
 }
+void multicycle_overdub(t_multicycle *x, t_floatarg odub) {
+  x->x_multicycle->overdub(-1, int(odub));
+}
+
 
 void multicycle_quantize(t_multicycle *x, t_floatarg division) {
   x->x_multicycle->quantize(int(division));
@@ -126,7 +130,8 @@ void multicycle_setup(void) {
                   A_DEFFLOAT, 0);
   class_addmethod(multicycle_class, (t_method)multicycle_loop, gensym("loop"),
                   A_DEFFLOAT, 0);
-                  
+  class_addmethod(multicycle_class, (t_method)multicycle_overdub, gensym("overdub"),
+                  A_DEFFLOAT, 0);                  
 
   class_addmethod(multicycle_class, (t_method)multicycle_quantize,
                   gensym("quantize"), A_DEFFLOAT, 0);

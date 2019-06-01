@@ -48,7 +48,13 @@ public:
   }
   
   void overdub(int mc_id, bool overdub) {
-    m_midicycles[mc_id].overdub(overdub);
+    if(mc_id = -1) { 
+      for ( auto & mc : m_midicycles){
+        mc.overdub(overdub);
+      }
+    } else {
+      m_midicycles[mc_id].overdub(overdub);
+    }
   }
   
   void aux(int auxval){
