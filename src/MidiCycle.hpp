@@ -5,11 +5,7 @@ namespace MCycle {
 enum class mcState { EMPTY,PLAYING,STOP };
 //
 typedef std::pair <global_step, note_id> note_off_event;
-struct noteOnInfo {
-  char velocity;
-  global_step start_global;
-  local_step start_local;
-};
+
 class MidiCycle {
 friend class cereal::access;
 public:
@@ -19,7 +15,11 @@ public:
         m_playing_notes(), m_quantize(0), m_quantize_changed(false), m_overdub(false),m_notes_out(){}
         
 
-  
+  struct noteOnInfo {
+    char velocity;
+    global_step start_global;
+    local_step start_local;
+  };  
   // Incoming note on/off to the record
   void note_event(note_id note, char velocity);
   // PPQ ticks from MIDI clock, return note events

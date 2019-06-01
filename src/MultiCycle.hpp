@@ -7,14 +7,44 @@
 #include <cereal/types/vector.hpp>
 namespace MCycle {
 
-typedef  std::vector < std::pair<chan_id, noteEvent>> mc_timestep;
+
+class NoteTracker {
+  public:
+  NoteTracker() : m_held_notes()
+  {};
+     
+  void note_on(global_step step, note_id note){
+    // Insert into held notes
+    std::pair<char, global_step>  note_on{note, step };
+    m_held_notes.insert(note_on);
+  }
+  // note off, return length or 0 if not found
+  global_step note_off(global_step step, note_id note){
+
+    // Note off
+    global_step duration = 0;
+    auto iter = m_held_notes.find(note);
+    if (iter != m_held_notes.end()) {
+      const auto &start_step = (*iter).second;
+      duration = step - start_step;
+      m_held_notes.erase(iter);
+    }
+    return duration;
+  }
+  void clear() {
+    m_held_notes.clear();
+  }
+  private:
+    std::multimap<note_id, global_step> m_held_notes;
+  
+};
 
 
 class MultiCycle {
 friend class cereal::access;
 public:
   MultiCycle(int max_length, int num_channels)
-      :  m_auxval(0),m_max_length{max_length},m_num_channels{num_channels}, m_active_channel{0},m_loop_length{1},  m_midi_src(0), m_midicycles(),  m_playing_notes(), m_notes_out()
+      :  m_auxval(0),m_max_length{max_length},m_num_channels{num_channels}, m_active_channel{0},m_loop_length{1},  m_midi_src(0), m_midicycles(),  m_playing_notes(), m_notes_out(),m_step_global(0), m_key_tracker()
       { 
         // Create n midi loopers        
         for(int i = 0 ; i < num_channels; i ++){
@@ -70,6 +100,8 @@ public:
         flush_playing();
       }
     }
+    // Clear outstanding key presses
+    if(m_auxval != auxval) m_key_tracker.clear();
     m_auxval = auxval;
   }
   void set_loop_length(int length){
@@ -109,6 +141,8 @@ private:
   std::multiset<note_id> m_playing_notes;
   std::vector<std::string> m_status;
   std::deque<std::pair<int, noteEvent>> m_notes_out;
+  global_step m_step_global;
+  NoteTracker m_key_tracker;
   void flush_playing(){
     for( const note_id &pnote : m_playing_notes){
       m_midicycles[m_active_channel].note_event(pnote,0);
@@ -184,38 +218,52 @@ void MultiCycle::key_event(note_id note, char velocity) {
   if(m_midi_src == -1 && m_auxval  == 0){
     
     note_event(-1, note, velocity);
-  } else if(velocity > 0){
-    if(note >= 60 && note < 72){
-      int mc_id = note-60;
-      if(mc_id == m_active_channel) {
-        // loop, or if looping change overdub
-        if( m_midicycles[m_active_channel].get_state() == mcState::EMPTY ) {
-          m_midicycles[m_active_channel].loop(m_loop_length);
-          DEBUG_POST("loop channel %d len %d",mc_id,m_loop_length);
+    return;
+  } 
+  
+  if(velocity > 0){
+    m_key_tracker.note_on(m_step_global, note);
+  } else {
+    auto length = m_key_tracker.note_off(m_step_global, note);
+    
+    if(length > 48 ){
+      // Long Press
+      if(note >= 60 && note < 72) {
+        int mc_id = note-60;
+        m_midicycles[mc_id].loop(0);
+      } else if (note >= 72 && note <84)  {
+        // Goto new page
+      }     
+    } else if (length > 1){
+      // Short press
+      if(note >= 60 && note < 72) {
+        int mc_id = note-60;
+        if(mc_id == m_active_channel) {
+          // loop, or if looping change overdub
+          if( m_midicycles[m_active_channel].get_state() == mcState::EMPTY ) {
+            m_midicycles[m_active_channel].loop(m_loop_length);
+            DEBUG_POST("loop channel %d len %d",mc_id,m_loop_length);
+          }
+          
+        } else {      
+          // Flush channel held notes and switch 
+          flush_playing();
+          DEBUG_POST("active channel %d ",mc_id);
+          m_active_channel = mc_id;
         }
         
-      } else {      
-        // Flush channel held notes and switch 
-        flush_playing();
-        DEBUG_POST("active channel %d ",mc_id);
-        m_active_channel = mc_id;
-      }
-      
-    } else if (note >= 72 && note <84)  {
-      int mc_id = note-72;
-      // Play/Stop
-      DEBUG_POST("play/stop channel %d",mc_id);
-      m_midicycles[mc_id].playstop();
-    } 
+      } else if (note >= 72 && note <84)  {
+        int mc_id = note-72;
+        // Play/Stop
+        DEBUG_POST("play/stop channel %d",mc_id);
+        m_midicycles[mc_id].playstop();
+      }       
+    }
   }
-
-  return;
 };
 
 
 void MultiCycle::set_src(int channel) {
-
-
   flush_playing();
   DEBUG_POST("src %d",channel);
   m_midi_src = channel;
@@ -248,7 +296,7 @@ void MultiCycle::tick(int tick) {
       m_notes_out.push_back({m_channel_dests[mc_id],note});
     }
   }
-  
+  m_step_global++;
   return;
 }
 }
