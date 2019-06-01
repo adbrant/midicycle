@@ -227,11 +227,14 @@ void MultiCycle::set_dest(int channel, int dest) {
   if(m_channel_dests[channel] != dest) {
     //Flush  previous dest
     DEBUG_POST("channel %d  dest %d flushing",channel,dest);
-    auto notes = m_midicycles[m_active_channel].flush();
-    for( auto note : notes){
+    auto & notes = m_midicycles[channel].flush();
+    for( auto & note : notes){
       m_notes_out.push_back({m_channel_dests[channel],note});
     }
     m_channel_dests[channel] = dest;
+  }
+  if( m_active_channel == channel){
+    flush_playing();
   }
   return;
 }
@@ -240,8 +243,8 @@ void MultiCycle::tick(int tick) {
   
   // Get active notes from all mcs
   for(int mc_id = 0; mc_id <m_num_channels ; mc_id++){
-    auto notes = m_midicycles[mc_id].tick(tick);
-    for( auto note : notes){
+    auto & notes = m_midicycles[mc_id].tick(tick);
+    for( auto & note : notes){
       m_notes_out.push_back({m_channel_dests[mc_id],note});
     }
   }
