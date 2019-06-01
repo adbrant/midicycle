@@ -114,7 +114,7 @@ const timestep& MidiCycle::flush() {
    // Clear any previous notes
   m_notes_out.clear();
   for  (auto & notepair : m_playing_notes) {  
-    noteEvent note_off = {notepair.second , 0};
+    noteEvent note_off = {notepair.second , 0, 0};
     m_notes_out.push_back(note_off);       
     DEBUG_POST("Flushing note %d global ts %d local ts %d",(*m_playing_notes.begin()).second, m_step_global, m_step);
    
@@ -198,7 +198,7 @@ const timestep& MidiCycle::tick(int tick) {
   }
   while (!m_playing_notes.empty() &&
          (*m_playing_notes.begin()).first <= m_step_global) {  
-    noteEvent note_off = { (*m_playing_notes.begin()).second, 0};
+    noteEvent note_off = { (*m_playing_notes.begin()).second, 0, 0};
     m_notes_out.push_back(note_off);       
     DEBUG_POST("Ending note %d global ts %d local ts %d",(*m_playing_notes.begin()).second, m_step_global, m_step);
     m_playing_notes.erase(m_playing_notes.begin());     

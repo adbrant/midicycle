@@ -20,6 +20,12 @@ public:
           m_midicycles.emplace_back(max_length);
           m_channel_dests.push_back(1);
         }
+        m_status.push_back(std::string("screenLine3"));
+        m_status.push_back(std::string());
+        m_status.push_back(std::string("screenLine4"));
+        m_status.push_back(std::string());
+        m_status.push_back(std::string("screenLine5"));
+        m_status.push_back(std::string());
       }
   // Incoming note on/off from keyboard (used for control)
   const mc_timestep& key_event(note_id note, char velocity);
@@ -71,7 +77,7 @@ public:
   
   void set_active(int mc_id);
   
-  std::string& get_status();
+  std::vector<std::string>& get_status();
   
   template<class Archive>
   void serialize(Archive & archive)
@@ -90,7 +96,7 @@ private:
   std::vector<MidiCycle> m_midicycles;
   std::vector<int> m_channel_dests;
   std::multiset<note_id> m_playing_notes;
-  std::string m_status;
+  std::vector<std::string> m_status;
   mc_timestep m_notes_out;
   void flush_playing(){
     for( const note_id &pnote : m_playing_notes){
@@ -101,21 +107,32 @@ private:
 };
 
 
-std::string& MultiCycle::get_status() {
-  m_status.clear();
+std::vector<std::string>& MultiCycle::get_status() {
+  
+
+  m_status[1].clear();
+  m_status[3].clear();
+  m_status[5].clear();
   for(int i = 0 ; i < m_num_channels; i ++) {
+    
     auto & mc = m_midicycles[i];
     mcState state  = mc.get_state();
     bool active = i == m_active_channel;
+
+    m_status[1]+= active ? "v" : " ";
+    bool blackkey = i == 1 or i == 3 or i == 6 or i == 8 or i == 10;
+    int statusline = blackkey ? 3 : 5;
+    int emptyline = blackkey ? 5 : 3;
     if(state == mcState::EMPTY){
-      m_status+= active? "O" : "o";
+      m_status[statusline] +=  "o";
     } else if (state == mcState::PLAYING){
-      m_status+= active? "A" : ">";
+      m_status[statusline]+=   ">";
       
     } else if (state == mcState::STOP){
-      m_status+= active? "a" : "|";
+      m_status[statusline]+=   "|";
       
     }
+    m_status[emptyline] += " ";
     /*     
     o : empty
     > : Playing

@@ -51,6 +51,8 @@
 #X msg 334 154 dest 0 2;
 #X msg 27 345 overdub 0;
 #X msg 29 388 overdub 1;
+#X obj 473 304 r screenLine5;
+#X obj 470 354 print sl5;
 #X connect 0 0 18 0;
 #X connect 1 0 2 1;
 #X connect 2 0 3 0;
@@ -97,3 +99,4 @@
 #X connect 43 0 18 0;
 #X connect 44 0 18 0;
 #X connect 45 0 18 0;
+#X connect 46 0 47 0;

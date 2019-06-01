@@ -42,7 +42,6 @@ void play_notes(t_multicycle *x, const mc_timestep & tstep) {
     // Output events
     auto note = notepair.second;
     int chan =  notepair.first;
-    post("Playing note %d %d %d",chan,note.note, note.velocity);
     SETFLOAT(x->output_list, chan);
     SETFLOAT(x->output_list+1, note.note);
     SETFLOAT(x->output_list + 2, note.velocity);
@@ -57,9 +56,18 @@ void multicycle_note(t_multicycle *x, t_floatarg f1, t_floatarg f2, t_floatarg f
 void multicycle_key(t_multicycle *x, t_floatarg f1, t_floatarg f2) {
   auto &tstep = x->x_multicycle->key_event(int(f1), int(f2));
   play_notes(x, tstep);
-  std::string & status = x->x_multicycle->get_status();
+  auto & status = x->x_multicycle->get_status();
 
-  outlet_symbol(x->status_out, gensym(status.c_str()));
+  for(int i = 0; i < status.size() / 2 ; i++ ){
+    
+    t_pd *target = gensym(status[i*2].c_str())->s_thing;
+    if(target != NULL){
+      SETSYMBOL(x->output_list,gensym(status[i*2+1].c_str()));
+      pd_forwardmess(target, 1,x->output_list );
+    } else{
+      post("No object %s",status[i*2].c_str());
+    }
+  }
 }
 void multicycle_aux(t_multicycle *x, t_floatarg f1) {
   x->x_multicycle->aux(int(f1));

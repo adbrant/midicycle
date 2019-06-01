@@ -48,9 +48,7 @@ public:
     for(int i = 0 ; i < m_sequence_size; i++ ){
       if(m_sequence_data[i]){
         timestep ts = *m_sequence_data[i];
-        for(auto & note : ts){
-          num_notes++;
-        }
+        num_notes += ts.size();
       }
     }
     archive( num_notes);
