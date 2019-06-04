@@ -49,14 +49,8 @@ void play_notes(t_multicycle *x) {
     outlet_list(x->notes_out, &s_list, 3, x->output_list);
   } 
 } 
-
-void multicycle_note(t_multicycle *x, t_floatarg f1, t_floatarg f2, t_floatarg f3) {
-  x->x_multicycle->note_event(int(f1), int(f2), int(f3));
-  play_notes(x);
-}
-void multicycle_key(t_multicycle *x, t_floatarg f1, t_floatarg f2) {
-  x->x_multicycle->key_event(int(f1), int(f2));
-  play_notes(x);
+void print_status(t_multicycle *x) {
+  
   auto & status = x->x_multicycle->get_status();
 
   for(int i = 0; i < status.size() / 2 ; i++ ){
@@ -69,6 +63,17 @@ void multicycle_key(t_multicycle *x, t_floatarg f1, t_floatarg f2) {
       post("No object %s",status[i*2].c_str());
     }
   }
+} 
+
+
+void multicycle_note(t_multicycle *x, t_floatarg f1, t_floatarg f2, t_floatarg f3) {
+  x->x_multicycle->note_event(int(f1), int(f2), int(f3));
+  play_notes(x);
+}
+void multicycle_key(t_multicycle *x, t_floatarg f1, t_floatarg f2) {
+  x->x_multicycle->key_event(int(f1), int(f2));
+  play_notes(x);
+  print_status(x);
 }
 void multicycle_aux(t_multicycle *x, t_floatarg f1) {
   x->x_multicycle->aux(int(f1));
@@ -118,7 +123,10 @@ void multicycle_load(t_multicycle *x,t_symbol *file) {
   }
 }
 
-
+void multicycle_activepage(t_multicycle *x,t_symbol *page) {
+  x->x_multicycle->activepage(page->s_name);
+  print_status(x);
+}
 void multicycle_setup(void) {
   multicycle_class = class_new(gensym("multicycle"), (t_newmethod)multicycle_new,
                               (t_method)multicycle_free, sizeof(t_multicycle),
@@ -147,6 +155,8 @@ void multicycle_setup(void) {
   class_addmethod(multicycle_class, (t_method)multicycle_save,
                   gensym("save"), A_DEFSYMBOL, 0);
   class_addmethod(multicycle_class, (t_method)multicycle_load,
-                  gensym("load"), A_DEFSYMBOL, 0);                    
+                  gensym("load"), A_DEFSYMBOL, 0);  
+  class_addmethod(multicycle_class, (t_method)multicycle_activepage,
+                  gensym("activepage"), A_DEFSYMBOL, 0);                         
 }
 }

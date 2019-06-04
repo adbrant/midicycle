@@ -3,6 +3,7 @@
 #include <set>
 #include <string>
 #include <deque>
+#include <cstring>
 #include <cereal/access.hpp>
 #include <cereal/types/vector.hpp>
 namespace MCycle {
@@ -44,7 +45,7 @@ class MultiCycle {
 friend class cereal::access;
 public:
   MultiCycle(int max_length, int num_channels)
-      :  m_auxval(0),m_max_length{max_length},m_num_channels{num_channels}, m_active_channel{0},m_loop_length{1},  m_midi_src(0), m_midicycles(),  m_playing_notes(), m_notes_out(),m_step_global(0), m_key_tracker()
+      :  m_auxval(0),m_max_length{max_length},m_num_channels{num_channels}, m_active_channel{0},m_loop_length{1},  m_midi_src(0), m_midicycles(),  m_playing_notes(),m_status(), m_status_empty(), m_notes_out(),m_step_global(0), m_key_tracker(),m_mainpage(false)
       { 
         // Create n midi loopers        
         for(int i = 0 ; i < num_channels; i ++){
@@ -129,6 +130,10 @@ public:
     return retval;
   }
   
+  void activepage(const char* name){
+    m_mainpage = ( std::strcmp(name,"pg_main") == 0);
+  }
+  
 private:
   int m_auxval;
   int m_max_length;
@@ -140,9 +145,11 @@ private:
   std::vector<int> m_channel_dests;
   std::multiset<note_id> m_playing_notes;
   std::vector<std::string> m_status;
+  std::vector<std::string> m_status_empty;
   std::deque<std::pair<int, noteEvent>> m_notes_out;
   global_step m_step_global;
   NoteTracker m_key_tracker;
+  bool m_mainpage;
   void flush_playing(){
     for( const note_id &pnote : m_playing_notes){
       m_midicycles[m_active_channel].note_event(pnote,0);
@@ -155,10 +162,19 @@ private:
 
 
 std::vector<std::string>& MultiCycle::get_status() {
-  
+  if(!m_mainpage) {
+    return m_status_empty;
+  }
   m_status[1].clear();
   m_status[3].clear();
   m_status[5].clear();
+  
+  const int blankspaces = 4;
+  for(int i = 0 ; i < blankspaces; i ++) {
+    m_status[0] += " ";
+    m_status[2] += " ";
+    m_status[4] += " ";
+  }
   for(int i = 0 ; i < m_num_channels; i ++) {
     
     auto & mc = m_midicycles[i];
