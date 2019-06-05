@@ -58,6 +58,8 @@ public:
         m_status.push_back(std::string());
         m_status.push_back(std::string("screenLine5"));
         m_status.push_back(std::string());
+        m_status_empty.push_back(std::string("screenLine5"));
+        m_status_empty.push_back(std::string());
       }
   // Incoming note on/off from keyboard (used for control)
   void key_event(note_id note, char velocity);
@@ -181,10 +183,11 @@ std::vector<std::string>& MultiCycle::get_status() {
     mcState state  = mc.get_state();
     bool active = i == m_active_channel;
 
-    m_status[1]+= active ? "v" : " ";
+    
     bool blackkey = i == 1 or i == 3 or i == 6 or i == 8 or i == 10;
     int statusline = blackkey ? 3 : 5;
     int emptyline = blackkey ? 5 : 3;
+    m_status[1]+= (active && blackkey) ? "v" : " ";
     if(state == mcState::EMPTY){
       m_status[statusline] +=  "o";
     } else if (state == mcState::PLAYING){
@@ -194,7 +197,7 @@ std::vector<std::string>& MultiCycle::get_status() {
       m_status[statusline]+=   "|";
       
     }
-    m_status[emptyline] += " ";
+    m_status[emptyline] += !blackkey && active ? "v" :  " ";
     /*     
     o : empty
     > : Playing
