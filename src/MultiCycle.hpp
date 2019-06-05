@@ -171,9 +171,9 @@ std::vector<std::string>& MultiCycle::get_status() {
   
   const int blankspaces = 4;
   for(int i = 0 ; i < blankspaces; i ++) {
-    m_status[0] += " ";
-    m_status[2] += " ";
-    m_status[4] += " ";
+    m_status[1] += " ";
+    m_status[3] += " ";
+    m_status[5] += " ";
   }
   for(int i = 0 ; i < m_num_channels; i ++) {
     
