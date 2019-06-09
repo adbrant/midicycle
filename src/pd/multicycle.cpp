@@ -53,7 +53,7 @@ void print_status(t_multicycle *x) {
   
   auto & status = x->x_multicycle->get_status();
 
-  for(int i = 0; i < status.size() / 2 ; i++ ){
+  for(int i = 0; i < (int)status.size() / 2 ; i++ ){
     
     t_pd *target = gensym(status[i*2].c_str())->s_thing;
     if(target != NULL){

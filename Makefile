@@ -6,7 +6,7 @@
 lib.name = midicycle
 
 # input source file (class name == source file basename)
-class.sources = src/midicycle.cpp src/multicycle.cpp
+class.sources = src/pd/midicycle.cpp src/pd/multicycle.cpp
 
 common.sources = src/SeqRecorder.cpp  
 
