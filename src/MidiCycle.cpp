@@ -1,6 +1,4 @@
-#pragma once
 #include "MidiCycle.hpp"
-#include <cereal/access.hpp>
 namespace MCycle {
 
 

@@ -28,6 +28,6 @@ test: ./src/*.cpp ./src/*.hpp
 	./test | grep 'Done'
 	
 catch: 	./src/*.cpp ./src/*.hpp ./test/*.cpp
-	g++ -std=c++14 -DTEST -Isrc -Itest test/tests.cpp src/SeqRecorder.cpp -o catch
+	g++ -std=c++14 -DTEST -Isrc -Itest test/tests.cpp $(common.sources) -o catch
 	./catch
  	

@@ -1,4 +1,3 @@
-#pragma once
 #include "MultiCycle.hpp"
 #include <set>
 #include <string>
