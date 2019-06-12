@@ -17,7 +17,6 @@ public:
         m_sequence_data(sequence_size), m_empty_vectors{} {
     m_empty_vectors.reserve(empty_reserve);
   };
-
   void add_note(int step, noteEvent note);
 
   void clear_step(int step) {
