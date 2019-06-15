@@ -46,6 +46,10 @@ public:
   bool overdubbing(){
     return m_overdub;
   }
+  
+  int looplen(){
+    return m_looplen;
+  }
   template<class Archive>
   void serialize(Archive & archive)
   {
@@ -63,6 +67,7 @@ private:
   // Steps seen regardless of loop
   global_step m_step_global;
   int m_max_length;
+  int m_looplen;
   std::multimap<note_id, noteOnInfo> m_held_notes;
   std::multimap<global_step, note_id> m_playing_notes;
   int m_loop_start;

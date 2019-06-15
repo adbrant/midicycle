@@ -139,6 +139,7 @@ const timestep& MidiCycle::tick(int tick) {
 
 void MidiCycle::loop(int beats) {
   // if beats > 0 start looping, else start recording again
+  m_looplen = beats;
   if (beats < 1) {
     // Stop playing and start recording again
     m_state = mcState::EMPTY;
