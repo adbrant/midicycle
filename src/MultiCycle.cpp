@@ -127,13 +127,15 @@ std::vector<std::string>& MultiCycle::get_status() {
   m_status[5].clear();
   
   const int blankspaces = 4;
-  const int totallen = blankspaces*2+12;
-  for(int i = 0 ; i < blankspaces; i ++) {
+  int totallen = blankspaces*2+m_num_channels;
+  
+  
+  for(int i = 0 ; i < totallen; i ++) {
     m_status[1] += " ";
     m_status[3] += " ";
     m_status[5] += " ";
   }
-  for(int i = 0 ; i < m_num_channels; i ++) {
+  for(int i = 0 ; i < m_num_channels; i++) {
     
     auto & mc = m_midicycles[i];
     mcState state  = mc.get_state();
@@ -142,30 +144,29 @@ std::vector<std::string>& MultiCycle::get_status() {
     
     bool blackkey = i == 1 or i == 3 or i == 6 or i == 8 or i == 10;
     int statusline = blackkey ? 3 : 5;
-    int emptyline = blackkey ? 5 : 3;
-    m_status[1]+= (active && blackkey) ? "v" : " ";
+    if(active and  blackkey)  m_status[1][blankspaces+i] = 'v';
+    if(active and  !blackkey)  m_status[3][blankspaces+i] = 'v';
     if(state == mcState::EMPTY){
-      m_status[statusline] +=  "o";
+      m_status[statusline][blankspaces+i] =  'o';
     } else if (state == mcState::PLAYING){
-      m_status[statusline]+=   ">";
+      m_status[statusline][blankspaces+i] =   '>';
       
     } else if (state == mcState::STOP){
-      m_status[statusline]+=   "|";
+      m_status[statusline][blankspaces+i] =   '|';
       
     }
-    m_status[emptyline] += !blackkey && active ? "v" :  " ";
   }
   m_status[1].replace(0, 3 , "SRC");
   m_status[3].replace(0, 3 , get_src_display(m_midi_src) );
   
-  m_status[1].replace(totallen-3-1, 3 , "DST");
-  m_status[3].replace(totallen-3-1, 3 , get_dst_display(m_channel_dests[m_active_channel]));
+  m_status[1].replace(totallen-3, 3 , "DST");
+  m_status[3].replace(totallen-3, 3 , get_dst_display(m_channel_dests[m_active_channel]));
   
   if(m_midicycles[m_active_channel].get_state() != mcState::EMPTY) {
     int length = m_midicycles[m_active_channel].looplen();
     auto numstring = std::to_string(length);
     int copylength = numstring.length() > 2 ? 2 : numstring.length();
-    m_status[3].replace(totallen-3-1, copylength, numstring);
+    m_status[5].replace(totallen-3-1, copylength, numstring);
   }
   
   return m_status;
