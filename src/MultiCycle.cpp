@@ -263,10 +263,10 @@ void MultiCycle::set_dest(int channel, int dest) {
     for( auto & note : notes){
       m_notes_out.push_back({m_channel_dests[channel],note});
     }
+    if( m_active_channel == channel){
+      flush_playing();
+    }
     m_channel_dests[channel] = dest;
-  }
-  if( m_active_channel == channel){
-    flush_playing();
   }
   return;
 }
