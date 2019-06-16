@@ -8,6 +8,8 @@
 #include <cereal/types/vector.hpp>
 namespace MCycle {
 
+const char* get_dst_display(int dst);
+const char* get_src_display(int src);
 
 class NoteTracker {
   public:

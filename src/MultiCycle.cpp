@@ -127,13 +127,27 @@ std::vector<std::string>& MultiCycle::get_status() {
   m_status[5].clear();
   
   const int blankspaces = 4;
-  int totallen = blankspaces*2+m_num_channels;
+  int totallen = blankspaces*2+m_num_channels+1;
   
   
   for(int i = 0 ; i < totallen; i ++) {
     m_status[1] += " ";
     m_status[3] += " ";
     m_status[5] += " ";
+  }
+  
+  m_status[1].replace(0, 3 , "SRC");
+  m_status[3].replace(0, 3 , get_src_display(m_midi_src) );
+  
+  m_status[1].replace(totallen-3, 3 , "DST");
+  m_status[3].replace(totallen-3, 3 , get_dst_display(m_channel_dests[m_active_channel]));
+  
+  if(m_midicycles[m_active_channel].get_state() != mcState::EMPTY) {
+    int length = m_midicycles[m_active_channel].looplen();
+    auto numstring = std::to_string(length);
+    int copylength = numstring.length() > 2 ? 2 : numstring.length();
+    m_status[5].replace(totallen-4, copylength, "L:");
+    m_status[5].replace(totallen-2, copylength, numstring);
   }
   for(int i = 0 ; i < m_num_channels; i++) {
     
@@ -156,18 +170,7 @@ std::vector<std::string>& MultiCycle::get_status() {
       
     }
   }
-  m_status[1].replace(0, 3 , "SRC");
-  m_status[3].replace(0, 3 , get_src_display(m_midi_src) );
-  
-  m_status[1].replace(totallen-3, 3 , "DST");
-  m_status[3].replace(totallen-3, 3 , get_dst_display(m_channel_dests[m_active_channel]));
-  
-  if(m_midicycles[m_active_channel].get_state() != mcState::EMPTY) {
-    int length = m_midicycles[m_active_channel].looplen();
-    auto numstring = std::to_string(length);
-    int copylength = numstring.length() > 2 ? 2 : numstring.length();
-    m_status[5].replace(totallen-3-1, copylength, numstring);
-  }
+
   
   return m_status;
 }
