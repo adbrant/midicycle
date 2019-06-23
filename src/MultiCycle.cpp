@@ -114,7 +114,7 @@ const char* get_dst_display(int dst){
       case 26:
         return "m16";          
   }
-  assert(0);
+  //assert(0);
   return "";
 }
 

@@ -12,7 +12,7 @@ public:
   MidiCycle(int max_length=12)
       : m_seq_recorder(max_length), m_state{mcState::EMPTY}, m_step{0},
         m_step_global{0}, m_max_length{max_length}, m_held_notes(),
-        m_playing_notes(), m_quantize(0), m_quantize_reset(false), m_overdub(false),m_notes_out(){
+        m_playing_notes(), m_quantize(0), m_quantize_reset(false), m_overdub(false),m_notes_out(),m_idle_steps(0),m_idle(true){
           assert(max_length < (1 << 16));
         }
         
@@ -79,6 +79,8 @@ private:
   int m_quantize;
   bool m_quantize_reset;
   bool m_overdub;
+  int m_idle_steps;
+  bool m_idle;
   timestep m_notes_out;
 };
 

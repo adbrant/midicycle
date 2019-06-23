@@ -17,6 +17,7 @@ void MidiCycle::note_event(note_id note, char velocity) {
       noteOnInfo note_on_info{velocity, m_step_global,m_step };
       m_held_notes.insert({note, note_on_info});
     }
+    m_idle = false;
   } else {
     // Note off
     auto iter = m_held_notes.find(note);
@@ -134,7 +135,12 @@ const timestep& MidiCycle::tick(int tick) {
   }
   // One PPQ midi clock tick
   m_step_global++;
-  
+  if(m_idle) {
+    m_idle_steps++;
+  } else {
+    m_idle_steps = 0;
+  }
+  m_idle = true;
   return m_notes_out;
 }
 
@@ -148,10 +154,22 @@ void MidiCycle::loop(int beats) {
   } else {
     DEBUG_POST("loop starting");
     m_state = mcState::PLAYING;
-    m_loop_end = m_step;
-    m_loop_start = (m_step - (beats * PPQ) + m_max_length) % m_max_length;
+    
+    int idle_steps = m_idle_steps > PPQ ? PPQ: m_idle_steps;
+    
+    m_loop_start = (m_step - (beats * PPQ) + m_max_length - m_idle_steps) % m_max_length;
+    
+
+    if(m_step >   m_max_length    ) m_step -= m_max_length;
+    
+    m_loop_end = m_step - m_idle_steps;
+    if( m_loop_end < 0) {
+      m_loop_end += (beats * PPQ);
+    }
+    
     DEBUG_POST("loop start/end %d %d", m_loop_start, m_loop_end);
-    m_step = m_loop_start;
+    m_step =  m_loop_start + idle_steps;
+     
     m_quantize_position = m_step;  
     // reset playback
     m_quantize_reset = true;

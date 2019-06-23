@@ -82,16 +82,20 @@ void multicycle_dest(t_multicycle *x, t_floatarg f1, t_floatarg f2) {
   x->x_multicycle->set_dest(int(f1), int(f2));
   play_notes(x);
   t_pd *target = gensym("screenLine5")->s_thing;
-  SETSYMBOL(x->output_list,gensym(get_dst_display(int(f2))));
-  pd_forwardmess(target, 1,x->output_list );
+  if(target != NULL) {
+    SETSYMBOL(x->output_list,gensym(get_dst_display(int(f2))));
+    pd_forwardmess(target, 1,x->output_list );
+  }
 }
 
 void multicycle_src(t_multicycle *x, t_floatarg f1) {
   x->x_multicycle->set_src(int(f1));
   play_notes(x);
   t_pd *target = gensym("screenLine5")->s_thing;
-  SETSYMBOL(x->output_list,gensym(get_src_display(int(f1))));
-  pd_forwardmess(target, 1,x->output_list );
+    if(target != NULL) {
+    SETSYMBOL(x->output_list,gensym(get_src_display(int(f1))));
+    pd_forwardmess(target, 1,x->output_list );
+    }
 }
 
 void multicycle_tick(t_multicycle *x, t_floatarg f1) {
