@@ -212,7 +212,7 @@ TEST_CASE("MidiCycle quantized playback", "[MidiCycle]"){
       for( auto & note : notes) {
         count++;
         printf("step %d note %d %d\n",step, note.note, note.velocity);
-        CHECK(note.velocity == 0 || quantize == 0 || (step%(PPQ/quantize)) == 0);
+        CHECK((note.velocity == 0 || quantize == 0 || (step%(PPQ/quantize)) == 0));
   
       }
     }
