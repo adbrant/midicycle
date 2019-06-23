@@ -62,6 +62,7 @@ const timestep& MidiCycle::tick(int tick) {
   // We need to realign if we are out of sync
   // do nothing until we are aligned
   if (tick != (m_step % 24)) {
+    DEBUG_POST("Out of sync %d %d",tick,m_step%24);
     return m_notes_out;
   } 
   
@@ -75,13 +76,13 @@ const timestep& MidiCycle::tick(int tick) {
         steps_to_play = 0;
       } else {
         
-        if(!m_quantize_changed) {
-          steps_to_play = quantize_len;
-        } else {
+        if(m_quantize_reset) {
           // Initial step, just play up to next beat
           m_quantize_position = m_step;
           steps_to_play = 1+(quantize_len/2);
-          m_quantize_changed = false;
+          m_quantize_reset = false;          
+        } else {
+          steps_to_play = quantize_len;
         }
       }   
     } 
@@ -123,7 +124,7 @@ const timestep& MidiCycle::tick(int tick) {
     
     m_step = (m_step + 1) % m_max_length;
 
-  }
+  } 
   while (!m_playing_notes.empty() &&
          (*m_playing_notes.begin()).first <= m_step_global) {  
     noteEvent note_off = { (*m_playing_notes.begin()).second, 0, 0};
@@ -152,6 +153,8 @@ void MidiCycle::loop(int beats) {
     DEBUG_POST("loop start/end %d %d", m_loop_start, m_loop_end);
     m_step = m_loop_start;
     m_quantize_position = m_step;  
+    // reset playback
+    m_quantize_reset = true;
   }
 }
 
@@ -162,7 +165,7 @@ void MidiCycle::quantize(int division) {
   } else {    
     m_quantize = division;
     // reset playback
-    m_quantize_changed = true;
+    m_quantize_reset = true;
   }
 }
 }

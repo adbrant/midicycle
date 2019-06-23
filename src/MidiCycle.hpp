@@ -12,7 +12,9 @@ public:
   MidiCycle(int max_length=12)
       : m_seq_recorder(max_length), m_state{mcState::EMPTY}, m_step{0},
         m_step_global{0}, m_max_length{max_length}, m_held_notes(),
-        m_playing_notes(), m_quantize(0), m_quantize_changed(false), m_overdub(false),m_notes_out(){}
+        m_playing_notes(), m_quantize(0), m_quantize_reset(false), m_overdub(false),m_notes_out(){
+          assert(max_length < (1 << 16));
+        }
         
 
   struct noteOnInfo {
@@ -37,6 +39,7 @@ public:
     if (m_state == mcState::PLAYING) {
       m_state = mcState::STOP;
     } else if (m_state == mcState::STOP ) {
+      m_quantize_reset = true;
       m_state = mcState::PLAYING;      
     }
   }  
@@ -54,7 +57,7 @@ public:
   void serialize(Archive & archive)
   {
     archive( m_seq_recorder, m_state, m_step,m_step_global,
-    m_max_length,m_loop_start,m_loop_end,m_quantize_position,m_quantize,m_quantize_changed
+    m_max_length,m_loop_start,m_loop_end,m_quantize_position,m_quantize,m_quantize_reset
     ); // serialize things by passing them to the archive
   }  
 private:
@@ -74,7 +77,7 @@ private:
   int m_loop_end;
   int m_quantize_position;
   int m_quantize;
-  bool m_quantize_changed;
+  bool m_quantize_reset;
   bool m_overdub;
   timestep m_notes_out;
 };

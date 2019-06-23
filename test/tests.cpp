@@ -1,22 +1,22 @@
 #define CATCH_CONFIG_MAIN
 #define CATCH_CONFIG_FAST_COMPILE
 #include "catch.hpp"
-
+#define CATCHDEBUG
 #include "SeqRecorder.hpp"
 #include "MidiCycle.hpp"
 #include "MultiCycle.hpp"
 #include <cereal/archives/json.hpp>
 #include <cereal/archives/binary.hpp>
 #include <fstream>
-
+#define RUNSTEPS 512
 using namespace MCycle;
 
 TEST_CASE("SeqRecorder usage and serialization", "[SeqRecorder]"){
   
-    int steps = 24 * 4 * 64 * 64;
+  int steps = 24 * 4 * 64;
   SeqRecorder record = SeqRecorder(steps);
   noteEvent n;
-  for (int step = 0; step < 20000; step++) {
+  for (int step = 0; step < RUNSTEPS; step++) {
     record.clear_step(step % steps);
     if (rand() % 256 < 8) {
       record.add_note(rand() % steps, n);
@@ -72,12 +72,12 @@ TEST_CASE("SeqRecorder usage and serialization", "[SeqRecorder]"){
 
 TEST_CASE("MidiCycle usage and serialization", "[MidiCycle]"){
   
-  int steps = 24 * 4 * 64 * 64;
+  int steps = 24 * 4 * 64;
   MidiCycle mc = MidiCycle(steps);
   noteEvent n;
   bool note_playing = false ;
   int note = 0;
-  for (int step = 0; step < 20000; step++) {
+  for (int step = 0; step < RUNSTEPS; step++) {
     mc.tick(step%24);
     
     if(rand() % 256 < 8) {
@@ -133,16 +133,103 @@ TEST_CASE("MidiCycle usage and serialization", "[MidiCycle]"){
   printf("Done\n");
 }
 
+TEST_CASE("MidiCycle playback", "[MidiCycle]"){
+  
+  // Basic playback
+  for(int loopstep = 14; loopstep < 25 ; loopstep++){ 
+    printf("loopstep %d\n",loopstep);
+    MidiCycle mc = MidiCycle(PPQ * 4 * 64);
+    noteEvent n;
+    bool note_playing = false ;
+    int note_id = 64;
+    int count = 0;
+    int steps = PPQ*20;
+    for (int step = 0; step < steps; step++) {
+      
+      switch(step){       
+       case 1:
+        mc.note_event(note_id, 127); 
+        break;
+       case 13:
+        mc.note_event(note_id, 0);
+        break;
+      }
+      if(step == loopstep){
+        mc.loop(1);
+      }
+      const timestep& notes = mc.tick(step%PPQ);
+      for( auto & note : notes) {
+        count++;
+        printf("step %d note %d %d\n",step, note.note, note.velocity);
+        if(step > PPQ) {
+         switch(step%PPQ){       
+         case 1:
+          CHECK(note.note == note_id);
+          CHECK(note.velocity == 127);
+          break;
+         case 13:
+          CHECK(note.note == note_id);
+          CHECK(note.velocity == 0);
+          break;
+         default:
+            CHECK(0);
+        }
+        }
+       }
+    }
+    printf("count %d %d\n",count,2*(steps-PPQ)/PPQ);
+    CHECK(count == 2*(steps-PPQ)/PPQ );
+  }
+}
 
+
+
+
+TEST_CASE("MidiCycle quantized playback", "[MidiCycle]"){
+  for(int quantize = 0; quantize <=4; quantize++)  {
+    printf("quantize %d \n", quantize);
+    // Basic playback
+    MidiCycle mc = MidiCycle(PPQ * 4 * 64);
+    noteEvent n;
+    bool note_playing = false ;
+    int note_id = 64;
+    int count = 0;
+    int steps =  PPQ*20;
+    mc.quantize(quantize);
+    for (int step = 0; step < steps; step++) {
+      
+      switch(step){       
+       case 1:
+        mc.note_event(note_id, 127); 
+        break;
+       case 13:
+        mc.note_event(note_id, 0);
+        break;
+       case 24:
+        mc.loop(1);
+      }
+      const timestep& notes = mc.tick(step%PPQ);
+      for( auto & note : notes) {
+        count++;
+        printf("step %d note %d %d\n",step, note.note, note.velocity);
+        CHECK(note.velocity == 0 || quantize == 0 || (step%(PPQ/quantize)) == 0);
+  
+      }
+    }
+    printf("count %d %d\n",count,2*(steps-PPQ)/PPQ);
+    CHECK(count == 2*(steps-PPQ)/PPQ );
+  }
+    
+}
 
 TEST_CASE("MultiCycle usage and serialization", "[MultiCycle]"){
   
-  int steps = 24 * 4 * 64 * 64;
+  int steps = 24 * 4 * 64;
   MultiCycle mc = MultiCycle(steps,12);
   noteEvent n;
   bool note_playing = false ;
   int note = 0;
-  for (int step = 0; step < 20000; step++) {
+  for (int step = 0; step < RUNSTEPS; step++) {
     mc.tick(step%24);
     
     if(rand() % 256 < 8) {
@@ -176,6 +263,7 @@ TEST_CASE("MultiCycle usage and serialization", "[MultiCycle]"){
     archive(mc);
   }
   {
+    
     std::ofstream os("data2muc.json");
     assert(os);
     cereal::JSONOutputArchive  archive(os);
