@@ -1,0 +1,17 @@
+ifeq ($(filter MINGW% MSYS%, $(uname)), $(uname))
+	system = Windows
+endif
+
+PDEXE = /c/Program\ Files/Pd/bin/pd.exe
+
+test: *.txt 
+	cp ../*.pd ./ 
+	cp ../../*.dll ./
+	$(PDEXE) -nogui tb_auto.pd
+	diff out.txt out_reference.txt
+	
+clean:
+	rm *.pd
+	rm *.dll
+	rm out.txt
+	

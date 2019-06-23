@@ -1,0 +1,14 @@
+#N canvas 492 253 549 374 10;
+#X obj 139 15 inlet;
+#X obj 185 74 symbol \$1;
+#X obj 189 36 inlet;
+#X msg 169 113 write \$1;
+#X obj 52 290 text define -k \$0-text;
+#A set;
+#X obj 27 242 text insert \$0-text 1e+009;
+#X obj 91 148 list;
+#X connect 0 0 6 0;
+#X connect 1 0 3 0;
+#X connect 2 0 1 0;
+#X connect 3 0 4 0;
+#X connect 6 0 5 0;

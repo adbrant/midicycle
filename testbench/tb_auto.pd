@@ -1,0 +1,6 @@
+#N canvas 708 180 450 300 10;
+#X obj 129 131 testbench;
+#X obj 102 70 loadbang;
+#X msg 107 185 \; pd quit \;;
+#X connect 0 0 2 0;
+#X connect 1 0 0 0;

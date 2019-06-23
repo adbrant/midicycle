@@ -1,0 +1,28 @@
+#N canvas -8 -8 1366 725 10;
+#X obj 134 158 multicycle 12;
+#X obj 105 74 inlet;
+#X obj 104 250 outlet;
+#X obj 179 250 outlet;
+#X obj 499 188 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 462 59 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X obj 313 90 testbench/outlist in.txt;
+#X obj 308 135 list prepend in;
+#X obj 300 221 list prepend out;
+#X obj 419 40 inlet;
+#X obj 236 71 t a a;
+#X obj 341 250 testbench/outlist out_reference.txt;
+#X connect 0 0 2 0;
+#X connect 0 0 8 0;
+#X connect 0 1 3 0;
+#X connect 1 0 10 0;
+#X connect 4 0 11 1;
+#X connect 5 0 6 1;
+#X connect 7 0 11 0;
+#X connect 8 0 11 0;
+#X connect 9 0 5 0;
+#X connect 9 0 4 0;
+#X connect 10 0 0 0;
+#X connect 10 1 6 0;
+#X connect 10 1 7 0;
