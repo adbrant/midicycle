@@ -218,7 +218,7 @@ void MultiCycle::key_event(note_id note, char velocity) {
       } else if (note >= 72 && note <84)  {
         // Goto new page
       }     
-    } else if (length > 1){
+    } else if (length >= 0) {
       // Short press
       if(note >= 60 && note < 72) {
         int mc_id = note-60;
@@ -237,10 +237,13 @@ void MultiCycle::key_event(note_id note, char velocity) {
         }
         
       } else if (note >= 72 && note <84)  {
-        int mc_id = note-72;
-        // Play/Stop
-        DEBUG_POST("play/stop channel %d",mc_id);
-        m_midicycles[mc_id].playstop();
+        // Prevent double triggering
+        if (length > 0) {
+          int mc_id = note-72;
+          // Play/Stop
+          DEBUG_POST("play/stop channel %d",mc_id);
+          m_midicycles[mc_id].playstop();
+        }
       }       
     }
   }
