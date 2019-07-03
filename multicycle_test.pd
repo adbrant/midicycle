@@ -1,11 +1,11 @@
-#N canvas -8 -8 1366 725 10;
+#N canvas 348 146 1366 725 10;
 #X obj 70 38 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
 -1;
 #X obj 266 41 % 24;
 #X obj 234 60 f 0;
 #X obj 267 66 + 1, f 7;
 #X obj 238 84 nbx 5 14 -1e+037 1e+037 0 0 empty empty empty 0 -8 0
-10 -262144 -1 -1 4 256;
+10 -262144 -1 -1 0 256;
 #X msg 175 98 tick \$1;
 #X obj 228 31 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
 -1;
@@ -65,6 +65,21 @@
 -1 -1;
 #X msg 25 80 loop 4;
 #X msg 413 126 dest 0 3;
+#X msg 664 129 moduleid s2;
+#X msg 676 165 activepage pg_main;
+#X msg 683 215 activemodule s2;
+#X obj 681 75 t b b b;
+#X obj 684 53 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X msg 745 349 knobraw 3 \$1;
+#X obj 772 291 hsl 128 15 0 1 0 0 empty empty empty -2 -8 0 10 -262144
+-1 -1 6400 1;
+#X obj 748 392 print;
+#X obj 256 440 r rackMsgs;
+#X obj 280 484 print rackMsgs;
+#X obj 841 325 hsl 128 15 0 1 0 0 empty empty empty -2 -8 0 10 -262144
+-1 -1 1700 1;
+#X msg 814 383 knobraw 4 \$1;
 #X connect 0 0 51 0;
 #X connect 1 0 2 1;
 #X connect 2 0 3 0;
@@ -118,3 +133,15 @@
 #X connect 55 0 51 1;
 #X connect 56 0 51 0;
 #X connect 57 0 51 0;
+#X connect 58 0 51 0;
+#X connect 59 0 51 0;
+#X connect 60 0 51 0;
+#X connect 61 0 60 0;
+#X connect 61 1 59 0;
+#X connect 61 2 58 0;
+#X connect 62 0 61 0;
+#X connect 63 0 51 0;
+#X connect 64 0 63 0;
+#X connect 66 0 67 0;
+#X connect 68 0 69 0;
+#X connect 69 0 51 0;

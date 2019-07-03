@@ -14,7 +14,7 @@ typedef struct _multicycle {
   t_outlet *notes_out;
   t_outlet *status_out;
   // channel note velocity
-  t_atom output_list[3];
+  t_atom output_list[4];
 } t_multicycle;
 
 void multicycle_bang(t_multicycle *x) {
@@ -65,6 +65,28 @@ void print_status(t_multicycle *x) {
   }
 } 
 
+void send_pd_msg(t_multicycle *x) {
+  std::vector<std::string> msg;
+  
+  if(x->x_multicycle->get_pd_message(msg )){
+    if(msg.size() > 4){
+      post("send_pd_msg too big");
+      return;
+    }
+
+    t_pd *target = gensym("rackMsgs")->s_thing;
+    if(target != NULL){
+      
+      for(int i = 0; i < msg.size() ; i++ ){
+        SETSYMBOL(x->output_list+i,gensym(msg[i].c_str()));
+      }
+      pd_forwardmess(target, msg.size(),x->output_list );
+    } else{
+      post("No rackMsgs object");
+    }
+  } 
+} 
+
 
 void multicycle_note(t_multicycle *x, t_floatarg f1, t_floatarg f2, t_floatarg f3) {
   x->x_multicycle->note_event(int(f1), int(f2), int(f3));
@@ -82,9 +104,12 @@ void multicycle_dest(t_multicycle *x, t_floatarg f1, t_floatarg f2) {
   x->x_multicycle->set_dest(int(f1), int(f2));
   play_notes(x);
   t_pd *target = gensym("screenLine5")->s_thing;
-  if(target != NULL) {
+  if(target != NULL && !x->x_multicycle->mainpage()) {
     SETSYMBOL(x->output_list,gensym(get_dst_display(int(f2))));
     pd_forwardmess(target, 1,x->output_list );
+  }
+  if( x->x_multicycle->mainpage() ) {
+    print_status(x);
   }
 }
 
@@ -92,10 +117,14 @@ void multicycle_src(t_multicycle *x, t_floatarg f1) {
   x->x_multicycle->set_src(int(f1));
   play_notes(x);
   t_pd *target = gensym("screenLine5")->s_thing;
-    if(target != NULL) {
+  if(target != NULL && !x->x_multicycle->mainpage() ) {
     SETSYMBOL(x->output_list,gensym(get_src_display(int(f1))));
     pd_forwardmess(target, 1,x->output_list );
-    }
+  }
+    
+  if( x->x_multicycle->mainpage() ) {
+    print_status(x);
+  }
 }
 
 void multicycle_tick(t_multicycle *x, t_floatarg f1) {
@@ -134,9 +163,27 @@ void multicycle_load(t_multicycle *x,t_symbol *file) {
 }
 
 void multicycle_activepage(t_multicycle *x,t_symbol *page) {
-  x->x_multicycle->activepage(page->s_name);
+  x->x_multicycle->active_page(page->s_name);
   print_status(x);
 }
+
+void multicycle_activemodule(t_multicycle *x,t_symbol *module) {
+  x->x_multicycle->set_active_module(module->s_name);
+}
+
+void multicycle_moduleid(t_multicycle *x,t_symbol *id) {
+  x->x_multicycle->set_module_id(id->s_name);
+}
+
+void multicycle_knob_raw(t_multicycle *x,t_floatarg knob, t_floatarg raw) {
+  if(x->x_multicycle->is_main_page()){
+    x->x_multicycle->set_knob(int(knob), raw);
+    send_pd_msg(x);
+  }
+}
+
+
+
 void multicycle_setup(void) {
   multicycle_class = class_new(gensym("multicycle"), (t_newmethod)multicycle_new,
                               (t_method)multicycle_free, sizeof(t_multicycle),
@@ -167,6 +214,15 @@ void multicycle_setup(void) {
   class_addmethod(multicycle_class, (t_method)multicycle_load,
                   gensym("load"), A_DEFSYMBOL, 0);  
   class_addmethod(multicycle_class, (t_method)multicycle_activepage,
-                  gensym("activepage"), A_DEFSYMBOL, 0);                         
+                  gensym("activepage"), A_DEFSYMBOL, 0);
+  class_addmethod(multicycle_class, (t_method)multicycle_activemodule,
+                  gensym("activemodule"), A_DEFSYMBOL, 0);
+  class_addmethod(multicycle_class, (t_method)multicycle_moduleid,
+                  gensym("moduleid"), A_DEFSYMBOL, 0);
+
+  class_addmethod(multicycle_class, (t_method)multicycle_knob_raw, gensym("knobraw"),
+                  A_DEFFLOAT,A_DEFFLOAT, 0);   
+
+                     
 }
 }

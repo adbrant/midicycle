@@ -8,6 +8,7 @@
 #include <cereal/archives/json.hpp>
 #include <cereal/archives/binary.hpp>
 #include <fstream>
+#include <iostream>
 #define RUNSTEPS 512
 using namespace MCycle;
 
@@ -285,3 +286,70 @@ TEST_CASE("MultiCycle usage and serialization", "[MultiCycle]"){
   }
   printf("Done\n");
 }
+
+
+
+TEST_CASE("MultiCycle knob tracking", "[MultiCycle]"){
+  
+  int steps = 24 * 4 * 64;
+  MultiCycle mc = MultiCycle(steps,12);
+  mc.set_module_id("s2");
+  CHECK(!mc.is_main_page() );
+  mc.active_page("pg_main");
+  mc.set_active_module("s2");
+  CHECK(mc.is_main_page() );
+  std::vector<std::string> msg;
+  int knob = 3;
+  // no message first call
+  mc.set_knob(knob, 0.5);
+  CHECK(msg.size() == 0);
+  CHECK(mc.get_pd_message(msg ) == false);
+  CHECK(msg.size() == 0);
+
+  // no message repeat value
+  mc.set_knob(knob, 0.5);
+  CHECK(msg.size() == 0);
+  CHECK(mc.get_pd_message(msg ) == false);
+  CHECK(msg.size() == 0);  
+  
+  // no message repeat value
+  mc.set_knob(knob, 0.8);
+  CHECK(mc.get_pd_message(msg ) == true);
+  CHECK(msg.size() == 4); 
+  for( auto& str : msg){
+    std::cout << str << std::endl;     
+  }
+  CHECK(msg[0] == "set_param"); 
+  CHECK(msg[1] == "s2"); 
+  CHECK(msg[2] == "mc_inchan");
+  CHECK( msg[3].find("0.8")== 0);
+  msg.clear();
+  
+  knob = 4;
+  // no message first call
+  mc.set_knob(knob, 0.4);
+  CHECK(msg.size() == 0);
+  CHECK(mc.get_pd_message(msg ) == false);
+  CHECK(msg.size() == 0);
+  for( auto& str : msg){
+    std::cout << str << std::endl;     
+  }
+  // no message repeat value
+  mc.set_knob(knob, 0.4);
+  CHECK(msg.size() == 0);
+  CHECK(mc.get_pd_message(msg ) == false);
+  CHECK(msg.size() == 0);  
+  
+  // no message repeat value
+  mc.set_knob(knob, 0.6);
+  CHECK(mc.get_pd_message(msg ) == true);
+  CHECK(msg.size() == 4); 
+  for( auto& str : msg){
+    std::cout << str << std::endl;     
+  }
+  CHECK(msg[0] == "set_param"); 
+  CHECK(msg[1] == "s2"); 
+  CHECK(msg[2] == "mc_chan_0");
+  CHECK( msg[3].find("0.6")== 0);
+}
+

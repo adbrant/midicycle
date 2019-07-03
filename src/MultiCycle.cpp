@@ -9,6 +9,8 @@
 namespace MCycle {
 
 
+
+
  // Return string literal of src name (three character)
 const char* get_src_display(int src){
 
@@ -170,8 +172,6 @@ std::vector<std::string>& MultiCycle::get_status() {
       
     }
   }
-
-  
   return m_status;
 }
 
