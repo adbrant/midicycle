@@ -78,7 +78,13 @@ void send_pd_msg(t_multicycle *x) {
     if(target != NULL){
       
       for(int i = 0; i < msg.size() ; i++ ){
-        SETSYMBOL(x->output_list+i,gensym(msg[i].c_str()));
+        
+        try {
+          float number =  std::stof(msg[i]);
+          SETFLOAT(x->output_list+i,number);
+        } catch (...) {
+          SETSYMBOL(x->output_list+i,gensym(msg[i].c_str()));
+        }
       }
       pd_forwardmess(target, msg.size(),x->output_list );
     } else{
