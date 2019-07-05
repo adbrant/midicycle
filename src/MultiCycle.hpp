@@ -181,7 +181,7 @@ public:
       }      
     } else if (knob_id == 4){
       if(m_knob_tracker.update(knob_id-1,val) >= 0  ) { 
-        m_dst_msg = { "setparam", m_module_id,  "mc_chan_"+std::to_string(m_active_channel), std::to_string(val) }; 
+        m_dst_msg = { "setparam", m_module_id,  "mc_chan_"+std::to_string(m_active_channel+1), std::to_string(val) }; 
       }      
     }
   }
