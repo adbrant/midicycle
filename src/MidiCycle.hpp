@@ -12,7 +12,7 @@ public:
   MidiCycle(int max_length=12)
       : m_seq_recorder(max_length), m_state{mcState::EMPTY}, m_step{0},
         m_step_global{0}, m_max_length{max_length}, m_held_notes(),
-        m_playing_notes(), m_quantize(0), m_quantize_reset(false), m_overdub(false),m_notes_out(),m_idle_steps(0),m_idle(true){
+        m_playing_notes(), m_quantize(0), m_quantize_reset(false), m_overdub(false),m_notes_out(),m_idle_steps(0),m_idle(true),m_transpose(0){
           assert(max_length < (1 << 16));
         }
         
@@ -60,6 +60,12 @@ public:
     m_max_length,m_loop_start,m_loop_end,m_quantize_position,m_quantize,m_quantize_reset
     ); // serialize things by passing them to the archive
   }  
+  void set_transpose(int transpose){
+    m_transpose = transpose;
+  }
+  int get_transpose(){
+    return m_transpose;
+  }  
 private:
   
 
@@ -82,6 +88,7 @@ private:
   int m_idle_steps;
   bool m_idle;
   timestep m_notes_out;
+  int m_transpose;
 };
 
 }
