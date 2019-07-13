@@ -104,6 +104,11 @@ public:
  // set dest for channel, return any note-offs
   void  set_src(int channel);
   
+  // set transpose for channel
+  void  set_transpose(int channel, int transpose){
+     m_midicycles[channel].set_transpose(transpose);
+  }
+  
   // Loop # of beats, or stop looping is arg is 0
   void loop(int mc_id, int beats){
     m_midicycles[mc_id].loop(beats);
@@ -115,6 +120,7 @@ public:
     }
   }
   
+  // Incoming notes will overdub into active sequence
   void overdub(int mc_id, bool overdub) {
     if(mc_id == -1) { 
       for ( auto & mc : m_midicycles){
@@ -153,6 +159,7 @@ public:
   bool notesready() {
     return !m_notes_out.empty();
   }
+  
   std::pair<int, noteEvent> popnote(){
     assert(notesready());
     std::pair<int, noteEvent> retval = m_notes_out.front();

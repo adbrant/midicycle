@@ -319,7 +319,7 @@ TEST_CASE("MultiCycle knob tracking", "[MultiCycle]"){
   for( auto& str : msg){
     std::cout << str << std::endl;     
   }
-  CHECK(msg[0] == "set_param"); 
+  CHECK(msg[0] == "setparam"); 
   CHECK(msg[1] == "s2"); 
   CHECK(msg[2] == "mc_inchan");
   CHECK( msg[3].find("0.8")== 0);
@@ -347,9 +347,9 @@ TEST_CASE("MultiCycle knob tracking", "[MultiCycle]"){
   for( auto& str : msg){
     std::cout << str << std::endl;     
   }
-  CHECK(msg[0] == "set_param"); 
+  CHECK(msg[0] == "setparam"); 
   CHECK(msg[1] == "s2"); 
-  CHECK(msg[2] == "mc_chan_0");
+  CHECK(msg[2] == "mc_chan_1");
   CHECK( msg[3].find("0.6")== 0);
 }
 

@@ -119,6 +119,13 @@ void multicycle_dest(t_multicycle *x, t_floatarg f1, t_floatarg f2) {
   }
 }
 
+void multicycle_transpose(t_multicycle *x, t_floatarg f1, t_floatarg f2) {
+  x->x_multicycle->set_transpose(int(f1), int(f2));
+  if( x->x_multicycle->mainpage() ) {
+    print_status(x);
+  }
+}
+
 void multicycle_src(t_multicycle *x, t_floatarg f1) {
   x->x_multicycle->set_src(int(f1));
   play_notes(x);
@@ -203,9 +210,10 @@ void multicycle_setup(void) {
                   A_DEFFLOAT, 0);                  
   class_addmethod(multicycle_class, (t_method)multicycle_src, gensym("src"),
                   A_DEFFLOAT, 0);    
-  class_addmethod(multicycle_class, (t_method)multicycle_dest, gensym("dest"),
-                  A_DEFFLOAT,A_DEFFLOAT, 0);
-                   
+                                      
+  class_addmethod(multicycle_class, (t_method)multicycle_transpose, gensym("transpose"),
+                  A_DEFFLOAT,A_DEFFLOAT, 0);                 
+                                      
   class_addmethod(multicycle_class, (t_method)multicycle_tick, gensym("tick"),
                   A_DEFFLOAT, 0);
   class_addmethod(multicycle_class, (t_method)multicycle_loop, gensym("loop"),

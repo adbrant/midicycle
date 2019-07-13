@@ -95,8 +95,10 @@ const timestep& MidiCycle::tick(int tick) {
       if( (not m_seq_recorder.step_empty(m_quantize_position)) ){
         //DEBUG_POST("Playing %d %d",m_step, m_quantize_position);
         const timestep &tstep = m_seq_recorder.get_step(m_quantize_position);
-        for (auto &note : tstep) {
+        for (auto note : tstep) {
           // Output note and schedule note off for a later global step
+          // Apply transpose
+          note.note += m_transpose;
           m_notes_out.push_back(note);
           DEBUG_POST("Playing note %d duration %d local ts %d note_off at %d",note.note, note.duration, m_step, m_step_global + note.duration);
           m_playing_notes.insert( note_off_event(m_step_global + note.duration, note.note));
