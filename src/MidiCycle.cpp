@@ -86,7 +86,9 @@ const timestep& MidiCycle::tick(int tick) {
           steps_to_play = quantize_len;
         }
       }   
-    } 
+    } else {
+      m_quantize_position = m_step;
+    }
     
     while(steps_to_play > 0) {      
       //DEBUG_POST("Trying %d %d",m_step, m_quantize_position);
