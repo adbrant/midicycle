@@ -8,9 +8,6 @@
 #include <assert.h>
 namespace MCycle {
 
-
-
-
  // Return string literal of src name (three character)
 const char* get_src_display(int src){
 
@@ -184,13 +181,16 @@ void MultiCycle::note_event(int channel, note_id note, char velocity) {
   // src == 0 is omni
   if(m_midi_src == 0  || channel == m_midi_src) {
     DEBUG_POST("Note thru AC:%d Dest:%d Note:%d Velocity:%d\n",m_active_channel, m_channel_dests[m_active_channel], note, velocity );
-    noteEvent ne = {note, velocity, 0};
+    int transpose;
     if(velocity){
+      transpose =  m_midicycles[m_active_channel].get_transpose();
       // record note so we can flush if needed
-      m_playing_notes.insert(note);
+      m_playing_notes.note_on(0,note,transpose);
     } else {
-      m_playing_notes.erase(note);
+      global_step gs;
+      m_playing_notes.note_off(0,note,gs, transpose );
     }
+    noteEvent ne = {note+transpose, velocity, 0};
     m_notes_out.push_back({m_channel_dests[m_active_channel],ne});
   }
   return;
@@ -206,9 +206,11 @@ void MultiCycle::key_event(note_id note, char velocity) {
   } 
   
   if(velocity > 0){
-    m_key_tracker.note_on(m_step_global, note);
+    m_key_tracker.note_on(m_step_global, note, 0);
   } else {
-    auto length = m_key_tracker.note_off(m_step_global, note);
+    global_step length;
+    int transpose;
+    m_key_tracker.note_off(m_step_global, note, length, transpose);
     
     if(length > 48 ){
       // Long Press

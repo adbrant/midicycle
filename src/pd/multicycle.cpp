@@ -141,6 +141,7 @@ void multicycle_src(t_multicycle *x, t_floatarg f1) {
 }
 
 void multicycle_tick(t_multicycle *x, t_floatarg f1) {
+  
   x->x_multicycle->tick(int(f1));  
   play_notes(x);
 }
