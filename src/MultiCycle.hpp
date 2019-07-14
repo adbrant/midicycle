@@ -60,7 +60,9 @@ class NoteTracker {
       const auto &start_step = (*iter).second.gs;
       duration = step - start_step;
       m_held_notes.erase(iter);
+      transpose = (*iter).second.transpose;
     }
+    
     return;
   }
   // clear all tracked notes
