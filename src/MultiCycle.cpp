@@ -135,8 +135,8 @@ std::vector<std::string>& MultiCycle::get_status() {
     m_status[5] += " ";
   }
   
-  m_status[1].replace(0, 3 , "SRC");
-  m_status[3].replace(0, 3 , get_src_display(m_midi_src) );
+  m_status[1].replace(0, 3 , "TRS");
+  m_status[3].replace(0, 3 , std::to_string(m_midicycles[m_active_channel].get_transpose()) );
   
   m_status[1].replace(totallen-3, 3 , "DST");
   m_status[3].replace(totallen-3, 3 , get_dst_display(m_channel_dests[m_active_channel]));

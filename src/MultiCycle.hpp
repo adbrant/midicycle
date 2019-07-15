@@ -197,7 +197,7 @@ public:
   void set_knob(int knob_id, float val){
     if(knob_id == 3){
       if(m_knob_tracker.update(knob_id-1,val) >= 0 ) { 
-        m_src_msg = { "setparam", m_module_id,  "mc_inchan", std::to_string(val) };
+        m_src_msg = { "setparam", m_module_id,  "mc_trans_"+std::to_string(m_active_channel+1), std::to_string(val) }; 
       }      
     } else if (knob_id == 4){
       if(m_knob_tracker.update(knob_id-1,val) >= 0  ) { 
