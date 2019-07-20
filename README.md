@@ -2,7 +2,7 @@
 12 tracks to sequence ORAC modules, or external MIDI devices.
 Can either work with a midi controller or organelle keyboard. 
 
-Features:
+## Features:
  - Supports free timing or non-destructive quantization (¼,1/3 ½ and whole note)
  - Supports save/load (all recordings are saved as part of ORAC preset)
  - Overdubbing
@@ -20,12 +20,15 @@ Overdub:        off
 TRS     v        DST
 0    o o  o o o   a1
     o o |o o o o  L4
-
+    
+    
+### Legend
+'''
 'v' points to the currently active channel
 o = empty
 > = playing
 | = stopped
-
+'''
 Main page controls:
 Knob 1: length of the loop to record
 Knob 2: Turns overdub on/off
@@ -42,14 +45,14 @@ It will automatically begin looping, press the 13th key, one octave up, to play 
 To add more notes to this loop, turn overdub on and play the notes you want to ad.
 To clear the loop, hold the first key for at least two beats and release it.
 
-Page 2 :
-Quantize : Sets quantization, (0 is off, 1 = whole note, 2 = 1/2 note, 3 = 1/3 note, 4 = 1/4 note)
-Midi Src: -1 = organelle keys, 0 = omi mode, 1-16 = midi channel 1-16
+### Page 2 :
+ - Quantize : Sets quantization, (0 is off, 1 = whole note, 2 = 1/2 note, 3 = 1/3 note, 4 = 1/4 note)
+ - Midi Src: -1 = organelle keys, 0 = omi mode, 1-16 = midi channel 1-16
 
-Page 3:
-BPM
-Midi clock out on/off
-Metronome volume (left channel)
-Metronome volume (right channel)
+### Page 3:
+ - BPM
+ - Midi clock out on/off
+ - Metronome volume (left channel)
+ - Metronome volume (right channel)
 
 
