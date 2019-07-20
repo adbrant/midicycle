@@ -100,7 +100,7 @@ const timestep& MidiCycle::tick(int tick) {
           // Apply transpose
           note.note += m_transpose;
           m_notes_out.push_back(note);
-          DEBUG_POST("Playing note %d duration %d local ts %d note_off at %d",note.note, note.duration, m_step, m_step_global + note.duration);
+          //DEBUG_POST("Playing note %d duration %d local ts %d note_off at %d",note.note, note.duration, m_step, m_step_global + note.duration);
           m_playing_notes.insert( note_off_event(m_step_global + note.duration, note.note));
         }
       }
@@ -113,14 +113,14 @@ const timestep& MidiCycle::tick(int tick) {
     m_step = (m_step + 1) % m_max_length;
     if (m_step == m_loop_end) {
       m_step = m_loop_start;
-      DEBUG_POST("loop looping");
+      //DEBUG_POST("loop looping");
     }
   } else if (m_state == mcState::STOP){
     // Keep stepping but dont play
     m_step = (m_step + 1) % m_max_length;
     if (m_step == m_loop_end) {
       m_step = m_loop_start;
-      DEBUG_POST("loop looping");
+      //DEBUG_POST("loop looping");
     }
   } else if (m_state == mcState::EMPTY){
     // Clear this step
@@ -134,7 +134,7 @@ const timestep& MidiCycle::tick(int tick) {
          (*m_playing_notes.begin()).first <= m_step_global) {  
     noteEvent note_off = { (*m_playing_notes.begin()).second, 0, 0};
     m_notes_out.push_back(note_off);       
-    DEBUG_POST("Ending note %d global ts %d local ts %d",(*m_playing_notes.begin()).second, m_step_global, m_step);
+    //DEBUG_POST("Ending note %d global ts %d local ts %d",(*m_playing_notes.begin()).second, m_step_global, m_step);
     m_playing_notes.erase(m_playing_notes.begin());     
   }
   // One PPQ midi clock tick
@@ -162,16 +162,13 @@ void MidiCycle::loop(int beats) {
     int idle_steps = m_idle_steps > PPQ ? PPQ: m_idle_steps;
     
     m_loop_start = (m_step - (beats * PPQ) + m_max_length - m_idle_steps) % m_max_length;
-    
-
-    if(m_step >   m_max_length    ) m_step -= m_max_length;
-    
+        
     m_loop_end = m_step - m_idle_steps;
     if( m_loop_end < 0) {
       m_loop_end += (beats * PPQ);
     }
     
-    DEBUG_POST("loop start/end %d %d", m_loop_start, m_loop_end);
+    DEBUG_POST("loop start/end %d %d idle %d mstep %d %d", m_loop_start, m_loop_end,idle_steps,m_step,m_loop_start + idle_steps );
     m_step =  m_loop_start + idle_steps;
      
     m_quantize_position = m_step;  
