@@ -211,7 +211,8 @@ void multicycle_setup(void) {
                   A_DEFFLOAT, 0);                  
   class_addmethod(multicycle_class, (t_method)multicycle_src, gensym("src"),
                   A_DEFFLOAT, 0);    
-                                      
+  class_addmethod(multicycle_class, (t_method)multicycle_dest, gensym("dest"),	
+                   A_DEFFLOAT,A_DEFFLOAT, 0);                                      
   class_addmethod(multicycle_class, (t_method)multicycle_transpose, gensym("transpose"),
                   A_DEFFLOAT,A_DEFFLOAT, 0);                 
                                       
