@@ -180,7 +180,7 @@ void MultiCycle::note_event(int channel, note_id note, char velocity) {
   
   // src == 0 is omni
   if(m_midi_src == 0  || channel == m_midi_src) {
-    DEBUG_POST("Note thru AC:%d Dest:%d Note:%d Velocity:%d\n",m_active_channel, m_channel_dests[m_active_channel], note, velocity );
+    //DEBUG_POST("Note thru AC:%d Dest:%d Note:%d Velocity:%d\n",m_active_channel, m_channel_dests[m_active_channel], note, velocity );
     int transpose;
     if(velocity){
       transpose =  m_midicycles[m_active_channel].get_transpose();

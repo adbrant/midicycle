@@ -161,9 +161,9 @@ void MidiCycle::loop(int beats) {
     
     int idle_steps = m_idle_steps > PPQ ? PPQ: m_idle_steps;
     
-    m_loop_start = (m_step - (beats * PPQ) + m_max_length - m_idle_steps) % m_max_length;
+    m_loop_start = (m_step - (beats * PPQ) + m_max_length - idle_steps) % m_max_length;
         
-    m_loop_end = m_step - m_idle_steps;
+    m_loop_end = m_step - idle_steps;
     if( m_loop_end < 0) {
       m_loop_end += (beats * PPQ);
     }
