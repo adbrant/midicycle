@@ -11,7 +11,8 @@
 #define DEBUG_POST(M, ...) printf(M); printf("\n")
 #else
 #include "m_pd.h"
-#define DEBUG_POST post
+//#define DEBUG_POST post
+#define DEBUG_POST(M, ...) ;
 #endif
 
 

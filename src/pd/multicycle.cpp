@@ -18,9 +18,9 @@ typedef struct _multicycle {
 } t_multicycle;
 
 void multicycle_bang(t_multicycle *x) {
-  post("Test");
-  SETFLOAT(x->output_list, 2);
-  SETFLOAT(x->output_list + 1, 3);
+ // post("Test");
+  //SETFLOAT(x->output_list, 2);
+  //SETFLOAT(x->output_list + 1, 3);
   //outlet_list(x->notes_out, &s_list, 2, x->output_list);
 }
 
