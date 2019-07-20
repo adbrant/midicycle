@@ -321,7 +321,7 @@ TEST_CASE("MultiCycle knob tracking", "[MultiCycle]"){
   }
   CHECK(msg[0] == "setparam"); 
   CHECK(msg[1] == "s2"); 
-  CHECK(msg[2] == "mc_inchan");
+  CHECK(msg[2] == "mc_trans_1");
   CHECK( msg[3].find("0.8")== 0);
   msg.clear();
   
