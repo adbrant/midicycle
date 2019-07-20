@@ -15,20 +15,16 @@ It’s an ‘always recording’ sequencer, so all notes are being recorded, and
 
 The first page display tells you the state of each channel and lets you record loops to any channel, as well as playing and stopping all channels.
 
-Rec Len:        16
-Overdub:        off
-TRS     v        DST
-0    o o  o o o   a1
-    o o |o o o o  L4
-    
-    
+
+
+
 ### Legend
-'''
-'v' points to the currently active channel
-o = empty
-> = playing
-| = stopped
-'''
+
+ - 'v' points to the currently active channel
+ - 'o' = empty
+ - '>' = playing
+ - ''| = stopped
+
 Main page controls:
 Knob 1: length of the loop to record
 Knob 2: Turns overdub on/off
@@ -38,7 +34,7 @@ By default you can use the organelle keys to play/record.
 When using the Organelle keys to play, the aux button will let you, otherwise you can just press the keys by themselves.
 When using an external MIDI controller to play/record (settign is on the second page) the keys 
 
-![alt text](https://raw.githubusercontent.com/adbrant/midicycle/master/midicycle.png)
+
 
 To record a loop to channel one, press the first key to select the channel, play the phrase, then press again to commit the phrase.
 It will automatically begin looping, press the 13th key, one octave up, to play or stop the loop. 
