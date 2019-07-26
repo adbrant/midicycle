@@ -25,7 +25,9 @@ Each channel is represented by a single character. The channel under the 'v' is 
  - 'o' = empty
  - '>' = playing
  - '|' = stopped
-
+TRS: Transpose for the current channel
+DST: Destination for current channel
+Lxx (in bottom corner): Length of the loop recorded into the current channel
 ###  Main page controls:
  - Knob 1: length of the loop to record
  - Knob 2: Turns overdub on/off. When on and the channel is not empty, all notes are immediately recoreded into the loop.
