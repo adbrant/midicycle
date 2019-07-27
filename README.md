@@ -1,9 +1,10 @@
 # midicycle
-12 tracks to sequence ORAC modules, or external MIDI devices.
-Can either work with a midi controller or organelle keyboard. 
+12 tracks looper/sequencer for ORAC modules and external MIDI devices.
+
 
 ## Features:
- - Supports free timing or non-destructive quantization (¼,1/3 ½ and whole note)
+ - Can either work with an external MIDI controller or standlone with organelle keyboard
+ - Supports free timing or non-destructive quantization (¼, 1/3 ½ and whole note)
  - Supports save/load (all recordings are saved as part of ORAC preset)
  - Overdubbing
  - Record up to 64 beat loops, also support any number of beats for polyrhythmic sequencing
@@ -11,12 +12,12 @@ Can either work with a midi controller or organelle keyboard.
  - Visual feedback on state of all tracks 
  - LED or audio metronome 
 
-It’s an ‘always recording’ sequencer, so all notes are being recorded, and recording a loop will save the last 1-64 beats (set by a parameter). This lets you can play a loop multiple times and commit it to the loop when you’ve played it perfectly, or decide to loop something you play after you play it.
+It’s an ‘always recording’ sequencer, so all notes are being recorded, and recording a loop will save the last 1-64 beats (set by a parameter). This lets you can play a loop multiple times and create a loop when you’ve played it perfectly, or decide to loop something after you've already played it.
 
 ## Usage:
 **MUST BE LOADED IN SLOT S2 (the lowest Eb), replacing the 'clock' module**
 
-![alt text](https://raw.githubusercontent.com/adbrant/midicycle/master/midicycle.png)
+![Control Overview](https://raw.githubusercontent.com/adbrant/midicycle/master/midicycle.png)
 
 The first page display tells you the state of each channel and lets you record loops to any channel, as well as playing and stopping all channels. 
 ### Legend
@@ -43,7 +44,7 @@ Knobs 3 and 4 change based on the current active channel.
 By default you can use the organelle keys to play/record.
 When using the Organelle keys to play, the Aux button needs to be pressed to use the key controls.  
 When using an external MIDI controller to play/record (setting is on the second page) the keys controls can be used without pressing Aux. 
-If connected, pressing the footswitch will record a loop into the current channel if it is empty. 
+If the footswitch is connected, pressing down will record a loop into the current channel if it is empty. 
 
 Example:
 To record a loop to channel two, press the second key (while holding aux if you are using the organelle keys to play) to select the channel, play the phrase, then press the second key again to commit the loop.
