@@ -106,6 +106,13 @@ void multicycle_key(t_multicycle *x, t_floatarg f1, t_floatarg f2) {
 void multicycle_aux(t_multicycle *x, t_floatarg f1) {
   x->x_multicycle->aux(int(f1));
 }
+
+void multicycle_fs(t_multicycle *x, t_floatarg f1) {
+  x->x_multicycle->footswitch(int(f1));
+  if( x->x_multicycle->mainpage() ) {
+    print_status(x);
+  }
+}
 void multicycle_dest(t_multicycle *x, t_floatarg f1, t_floatarg f2) {
   x->x_multicycle->set_dest(int(f1), int(f2));
   play_notes(x);
@@ -208,7 +215,10 @@ void multicycle_setup(void) {
   class_addmethod(multicycle_class, (t_method)multicycle_key, gensym("key"),
                   A_DEFFLOAT, A_DEFFLOAT, 0);
   class_addmethod(multicycle_class, (t_method)multicycle_aux, gensym("aux"),
-                  A_DEFFLOAT, 0);                  
+                  A_DEFFLOAT, 0); 
+
+  class_addmethod(multicycle_class, (t_method)multicycle_fs, gensym("fs"),
+                  A_DEFFLOAT, 0);                   
   class_addmethod(multicycle_class, (t_method)multicycle_src, gensym("src"),
                   A_DEFFLOAT, 0);    
   class_addmethod(multicycle_class, (t_method)multicycle_dest, gensym("dest"),	

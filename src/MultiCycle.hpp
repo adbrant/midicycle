@@ -158,6 +158,13 @@ public:
     m_loop_length = length;
   }
   
+  void footswitch(int fsval){
+    if( fsval == 1 && m_midicycles[m_active_channel].get_state() == mcState::EMPTY ) {
+      m_midicycles[m_active_channel].loop(m_loop_length);
+      DEBUG_POST("loop channel %d len %d",mc_id,m_loop_length);
+    }  
+  }
+  
   void set_active(int mc_id);
   
   std::vector<std::string>& get_status();
