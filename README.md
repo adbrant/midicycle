@@ -64,5 +64,5 @@ To clear the loop, hold the first key for at least two beats and release it.
  - Midi clock out on/off
 
 
-## Pages 4-9
+### Pages 4-9
 Dedicated controls for per channel destination and transpose (also can be changed on the main page).
