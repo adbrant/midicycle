@@ -1,9 +1,9 @@
-# midicycle
-12 tracks looper/sequencer for ORAC modules and external MIDI devices.
+# MultiCycle
+12 tracks looper/sequencer for ORAC
 
 
 ## Features:
- - Can either work with an external MIDI controller or standlone with organelle keyboard
+ - Works standlone with organelle keyboard or external MIDI controllers
  - Supports free timing or non-destructive quantization (¼, 1/3 ½ and whole note)
  - Supports save/load (all recordings are saved as part of ORAC preset)
  - Overdubbing
