@@ -44,12 +44,15 @@ The active channel will have an arrow pointing to it on the organelle screen.
 Initially channel 1, corresponding to the lowest key, is already active.
 
 When a channel is active, incoming notes are sent to the channels destination (set by knob 4).
-When the active channel is empty (represented by an 'o' on the screen,), pressing the same key you used to select the channel will record the last played notes into that channel. 
+
+When the active channel is empty (represented by an 'o' on the screen), pressing the same key you used to select the channel will record the last played notes into that channel. 
 The length of the loop is set by knob 1.
 If the footswitch is connected, pressing it down will also record a loop into the active channel.
 
 If overdub is enabled (by knob 2), once a loop is recorded any notes played into the actve channel will be recorded automatically.
+
 Once a loop is recorded into a channel, the upper 12 keys are used to play or stop the loop.
+
 Holding down the one of the lower 12 keys for two beats will clear that channel and return it to an empty state. 
 
 By default you can use the organelle keys to play/record, so the the Aux button needs to be pressed to use the key controls.  
