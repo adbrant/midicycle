@@ -42,11 +42,13 @@ L(1-64) in bottom corner: Length of the loop recorded into the current channel
 Pressing one of the lower 12 keys once selects the active channel. 
 The active channel will have an arrow pointing to it on the organelle screen.
 Initially channel 1, corresponding to the lowest key, is already active.
-When a channel is active, incoming notes are sent to the channels destination (set by knob 4).
-When the active channel is empty (represented by an 'o' on the screen,), pressing the same key you used to select the channel will record the last played notes into that channel. The length of the loop is set by knob 1.
-If the footswitch is connected, pressing it down will also record a loop into the active channel.
-If overdub is enabled (by knob 2), once a loop is recorded any notes played into the actve channel will be recorded automatically.
 
+When a channel is active, incoming notes are sent to the channels destination (set by knob 4).
+When the active channel is empty (represented by an 'o' on the screen,), pressing the same key you used to select the channel will record the last played notes into that channel. 
+The length of the loop is set by knob 1.
+If the footswitch is connected, pressing it down will also record a loop into the active channel.
+
+If overdub is enabled (by knob 2), once a loop is recorded any notes played into the actve channel will be recorded automatically.
 Once a loop is recorded into a channel, the upper 12 keys are used to play or stop the loop.
 Holding down the one of the lower 12 keys for two beats will clear that channel and return it to an empty state. 
 
@@ -54,11 +56,12 @@ By default you can use the organelle keys to play/record, so the the Aux button 
 When using an external MIDI controller to play/record (by setting 'Midi Src' on the second page to an incoming MIDI channel) the keys controls can be used without pressing Aux. 
 
 Example:
-To record a loop to channel three, press the third key, the lower 'D' (while holding aux if you are using the organelle keys to record notes as well). 
-Use the first knob to set the length of loop you want to record, play the phrase, then press the third key (the lower D) again to commit the loop. It will automatically begin looping.
-Press the 15th key, the D one octave up, to play or stop the loop. 
-To add more notes to this loop, turn 'overdub' on and play the notes you want to add.
-To clear the loop, hold the lower D key for at least two beats and release it.
+To record a loop to channel three:
+ - Press the third key, the lower 'D' (while holding aux if you are using the organelle keys to record notes as well). 
+ - Use the first knob to set the length of loop you want to record, play the phrase, then press the third key (the lower D) again to commit the loop. It will automatically begin looping.
+ - Press the 15th key, the D one octave up, to play or stop the loop. 
+ - To add more notes to this loop, turn 'overdub' on and play the notes you want to add.
+ - To clear the loop, hold the lower D key for at least two beats and release it.
 
 ### Page 2:
  - Quantize : Sets quantization, (0 is off, 1 = whole note, 2 = 1/2 note, 3 = 1/3 note, 4 = 1/4 note)
