@@ -161,8 +161,12 @@ void multicycle_overdub(t_multicycle *x, t_floatarg odub) {
 }
 
 
-void multicycle_quantize(t_multicycle *x, t_floatarg division) {
-  x->x_multicycle->quantize(int(division));
+void multicycle_quantize(t_multicycle *x, t_floatarg quantize) {
+  x->x_multicycle->quantize(int(quantize));
+}
+
+void multicycle_quantize_loop(t_multicycle *x,t_floatarg chan, t_floatarg quantize) {
+  x->x_multicycle->quantize_loop(int(chan), int(quantize));
 }
 
 void multicycle_save(t_multicycle *x, t_symbol *file) {
@@ -235,6 +239,8 @@ void multicycle_setup(void) {
 
   class_addmethod(multicycle_class, (t_method)multicycle_quantize,
                   gensym("quantize"), A_DEFFLOAT, 0);
+    class_addmethod(multicycle_class, (t_method)multicycle_quantize_loop,
+                  gensym("quantize_loop"), A_DEFFLOAT,A_DEFFLOAT, 0);
   class_addmethod(multicycle_class, (t_method)multicycle_save,
                   gensym("save"), A_DEFSYMBOL, 0);
   class_addmethod(multicycle_class, (t_method)multicycle_load,
