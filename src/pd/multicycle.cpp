@@ -55,7 +55,7 @@ void print_status(t_multicycle *x) {
   auto & status = x->x_multicycle->get_status();
 
   // make sure gate is open
-  t_pd *oscoutgate = gensym("OscOutGate")->s_thing;
+  t_pd *oscoutgate = gensym("oscOutGate")->s_thing;
   if(oscoutgate != NULL) {
     SETFLOAT(x->output_list,1);
     pd_forwardmess(oscoutgate, 1,x->output_list );
