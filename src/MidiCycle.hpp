@@ -30,7 +30,7 @@ public:
   void loop(int beats);
   // Quantize output to division 1-4, 0 is unquantized
   void quantize(int division);
-  
+
   // Kill remaining notes
   const timestep&  flush();
   

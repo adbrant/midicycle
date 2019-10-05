@@ -86,7 +86,7 @@ class MultiCycle {
 friend class cereal::access;
 public:
   MultiCycle(int max_length, int num_channels)
-      :  m_auxval(0),m_max_length{max_length},m_num_channels{num_channels}, m_active_channel{0},m_loop_length{1},  m_midi_src(0),m_step_global(0), m_mainpage(false),m_active_module(false)
+      :  m_quantize(0), m_auxval(0),m_max_length{max_length},m_num_channels{num_channels}, m_active_channel{0},m_loop_length{1},  m_midi_src(0),m_loop_quant(num_channels, -1),m_step_global(0), m_mainpage(false),m_active_module(false)
       { 
         // Create n midi loopers        
         for(int i = 0 ; i < num_channels; i ++){
@@ -101,6 +101,7 @@ public:
         m_status.push_back(std::string());
         m_status_empty.push_back(std::string("screenLine5"));
         m_status_empty.push_back(std::string());
+        
       }
   // Incoming note on/off from keyboard (used for control)
   void key_event(note_id note, char velocity);
@@ -128,10 +129,23 @@ public:
   }
   // Quantize output to division 1-4, 0 is unquantized
   void quantize(int division){
-    for( auto& mc : m_midicycles) {
-      mc.quantize(division);
+    m_quantize = division;
+    for( int i = 0; i < m_num_channels; i++ ) {
+      if(m_loop_quant[i] != -1 ) {
+        m_midicycles[i].quantize(division);
+      }
     }
   }
+  
+  // Quantize only this loop, -1 is use global setting
+  void quantize_loop(int loop, int division) { 
+    m_loop_quant[loop] = division;
+    if(division != -1){
+      m_midicycles[loop].quantize(division);      
+    } else{
+      m_midicycles[loop].quantize(m_quantize);
+    } 
+  }     
   
   // Incoming notes will overdub into active sequence
   void overdub(int mc_id, bool overdub) {
@@ -234,6 +248,7 @@ private:
   int m_active_channel;
   int m_loop_length;
   int m_midi_src;
+  int m_quantize;
   std::vector<MidiCycle> m_midicycles;
   std::vector<int> m_channel_dests;
   NoteTracker m_playing_notes;
@@ -241,6 +256,7 @@ private:
   std::vector<std::string> m_status_empty;
   std::vector<std::string> m_src_msg;
   std::vector<std::string> m_dst_msg;
+  std::vector<int> m_loop_quant;
   std::deque<std::pair<int, noteEvent>> m_notes_out;
   global_step m_step_global;
   NoteTracker m_key_tracker;
