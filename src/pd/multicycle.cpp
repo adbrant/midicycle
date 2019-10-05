@@ -51,8 +51,16 @@ void play_notes(t_multicycle *x) {
 } 
 void print_status(t_multicycle *x) {
   
+ 
   auto & status = x->x_multicycle->get_status();
 
+  // make sure gate is open
+  t_pd *oscoutgate = gensym("OscOutGate")->s_thing;
+  if(oscoutgate != NULL) {
+    SETFLOAT(x->output_list,1);
+    pd_forwardmess(oscoutgate, 1,x->output_list );
+  }  
+  
   for(int i = 0; i < (int)status.size() / 2 ; i++ ){
     
     t_pd *target = gensym(status[i*2].c_str())->s_thing;

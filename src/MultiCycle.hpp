@@ -131,7 +131,7 @@ public:
   void quantize(int division){
     m_quantize = division;
     for( int i = 0; i < m_num_channels; i++ ) {
-      if(m_loop_quant[i] != -1 ) {
+      if(m_loop_quant[i] == -1 ) {
         m_midicycles[i].quantize(division);
       }
     }
