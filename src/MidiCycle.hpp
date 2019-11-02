@@ -1,5 +1,9 @@
 #pragma once
 #include "SeqRecorder.hpp"
+#include <set>
+#include <string>
+#include <deque>
+#include <cstring>
 #include <cereal/access.hpp>
 namespace MCycle {
 enum class mcState { EMPTY,PLAYING,STOP };
