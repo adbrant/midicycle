@@ -1,0 +1,59 @@
+#N canvas 425 120 704 412 10;
+#X obj 193 149 print note;
+#X obj 324 150 print gate;
+#X obj 297 91 nbx 5 14 -1e+037 1e+037 0 0 empty empty empty 0 -8 0
+10 -262144 -1 -1 1 256;
+#X msg 112 85 72 100;
+#X msg 115 117 72 0;
+#X obj 215 74 oscpool 8;
+#X msg 237 17 reset;
+#X msg 54 85 79 100;
+#X msg 52 117 79 0;
+#X msg 41 179 76 100;
+#X msg 39 213 76 0;
+#X msg 99 179 84 100;
+#X msg 96 211 84 0;
+#X msg 214 54 note \$1 \$2;
+#X obj 218 248 route 0 1 2 3 4 5 6 7, f 31;
+#X obj 216 276 nbx 3 14 -1e+037 1e+037 0 0 empty empty empty 0 -8 0
+10 -262144 -1 -1 76 256;
+#X obj 208 299 nbx 3 14 -1e+037 1e+037 0 0 empty empty empty 0 -8 0
+10 -262144 -1 -1 79 256;
+#X obj 259 275 nbx 3 14 -1e+037 1e+037 0 0 empty empty empty 0 -8 0
+10 -262144 -1 -1 72 256;
+#X obj 273 296 nbx 3 14 -1e+037 1e+037 0 0 empty empty empty 0 -8 0
+10 -262144 -1 -1 72 256;
+#X obj 312 278 nbx 3 14 -1e+037 1e+037 0 0 empty empty empty 0 -8 0
+10 -262144 -1 -1 76 256;
+#X obj 324 298 nbx 3 14 -1e+037 1e+037 0 0 empty empty empty 0 -8 0
+10 -262144 -1 -1 72 256;
+#X obj 360 278 nbx 3 14 -1e+037 1e+037 0 0 empty empty empty 0 -8 0
+10 -262144 -1 -1 79 256;
+#X obj 377 298 nbx 3 14 -1e+037 1e+037 0 0 empty empty empty 0 -8 0
+10 -262144 -1 -1 79 256;
+#X msg 49 247 83 100;
+#X msg 46 279 83 0;
+#X connect 3 0 13 0;
+#X connect 4 0 13 0;
+#X connect 5 0 0 0;
+#X connect 5 0 14 0;
+#X connect 5 1 1 0;
+#X connect 5 1 2 0;
+#X connect 6 0 5 0;
+#X connect 7 0 13 0;
+#X connect 8 0 13 0;
+#X connect 9 0 13 0;
+#X connect 10 0 13 0;
+#X connect 11 0 13 0;
+#X connect 12 0 13 0;
+#X connect 13 0 5 0;
+#X connect 14 0 15 0;
+#X connect 14 1 16 0;
+#X connect 14 2 17 0;
+#X connect 14 3 18 0;
+#X connect 14 4 19 0;
+#X connect 14 5 20 0;
+#X connect 14 6 21 0;
+#X connect 14 7 22 0;
+#X connect 23 0 13 0;
+#X connect 24 0 13 0;
