@@ -156,25 +156,31 @@ void MidiCycle::loop(int beats) {
     m_state = mcState::EMPTY;
     DEBUG_POST("loop ending");
   } else {
-    DEBUG_POST("loop starting");
-    m_state = mcState::PLAYING;
-    
-    int idle_steps = m_idle_steps > PPQ ? PPQ: m_idle_steps;
-    
-    m_loop_start = (m_step - (beats * PPQ) + m_max_length - idle_steps) % m_max_length;
-        
-    m_loop_end = m_step - idle_steps;
-    if( m_loop_end < 0) {
-      m_loop_end += (beats * PPQ);
-    }
-    
-    DEBUG_POST("loop start/end %d %d idle %d mstep %d %d", m_loop_start, m_loop_end,idle_steps,m_step,m_loop_start + idle_steps );
-    m_step =  m_loop_start + idle_steps;
-     
-    m_quantize_position = m_step;  
-    // reset playback
-    m_quantize_reset = true;
+    commit_loop();
   }
+}
+
+void MidiCycle::commit_loop() {
+
+  DEBUG_POST("loop starting");
+  m_state = mcState::PLAYING;
+  
+  int idle_steps = m_idle_steps > PPQ ? PPQ: m_idle_steps;
+  
+  m_loop_start = (m_step - (m_looplen * PPQ) + m_max_length - idle_steps) % m_max_length;
+      
+  m_loop_end = m_step - idle_steps;
+  if( m_loop_end < 0) {
+    m_loop_end += (m_looplen * PPQ);
+  }
+  
+  DEBUG_POST("loop start/end %d %d idle %d mstep %d %d", m_loop_start, m_loop_end,idle_steps,m_step,m_loop_start + idle_steps );
+  m_step =  m_loop_start + idle_steps;
+   
+  m_quantize_position = m_step;  
+  // reset playback
+  m_quantize_reset = true;
+  
 }
 
 void MidiCycle::quantize(int division) {

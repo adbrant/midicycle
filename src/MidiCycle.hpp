@@ -6,7 +6,7 @@
 #include <cstring>
 #include <cereal/access.hpp>
 namespace MCycle {
-enum class mcState { EMPTY,PLAYING,STOP };
+enum class mcState { EMPTY,PLAYING,STOP,ARMED,RECORDING };
 //
 typedef std::pair <global_step, note_id> note_off_event;
 
@@ -16,7 +16,7 @@ public:
   MidiCycle(int max_length=12)
       : m_seq_recorder(max_length), m_state{mcState::EMPTY}, m_step{0},
         m_step_global{0}, m_max_length{max_length}, m_held_notes(),
-        m_playing_notes(), m_quantize(0), m_quantize_reset(false), m_overdub(false),m_notes_out(),m_idle_steps(0),m_idle(true),m_transpose(0){
+        m_playing_notes(), m_quantize(0), m_quantize_reset(false), m_overdub(false),m_notes_out(),m_idle_steps(0),m_idle(true),m_transpose(0),m_arm_mode(false){
           assert(max_length < (1 << 16));
         }
         
@@ -53,7 +53,12 @@ public:
   bool overdubbing(){
     return m_overdub;
   }
-  
+  void set_arm_mode (bool val){
+    m_arm_mode=val;
+  }
+  bool get_arm_mode (){
+    return m_arm_mode;
+  }
   int looplen(){
     return m_looplen;
   }
@@ -72,7 +77,7 @@ public:
   }  
 private:
   
-
+  void commit_loop();
   SeqRecorder m_seq_recorder;
   mcState m_state;
   // Step position in loop
@@ -93,6 +98,8 @@ private:
   bool m_idle;
   timestep m_notes_out;
   int m_transpose;
+  bool m_arm_mode;
+  int m_arm_remaining_steps;
 };
 
 }
