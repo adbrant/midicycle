@@ -159,6 +159,10 @@ void multicycle_tick(t_multicycle *x, t_floatarg f1) {
   
   x->x_multicycle->tick(int(f1));  
   play_notes(x);
+  
+  if((int(f1) == 0) && x->x_multicycle->mainpage() ) {
+    print_status(x);
+  }
 }
 
 void multicycle_loop(t_multicycle *x, t_floatarg beats) {
@@ -168,6 +172,9 @@ void multicycle_overdub(t_multicycle *x, t_floatarg odub) {
   x->x_multicycle->overdub(-1, int(odub));
 }
 
+void multicycle_arm_mode(t_multicycle *x, t_floatarg arm_mode) {
+  x->x_multicycle->set_arm_mode(arm_mode);
+}
 
 void multicycle_quantize(t_multicycle *x, t_floatarg quantize) {
   x->x_multicycle->quantize(int(quantize));
@@ -244,7 +251,8 @@ void multicycle_setup(void) {
                   A_DEFFLOAT, 0);
   class_addmethod(multicycle_class, (t_method)multicycle_overdub, gensym("overdub"),
                   A_DEFFLOAT, 0);                  
-
+  class_addmethod(multicycle_class, (t_method)multicycle_arm_mode, gensym("arm_mode"),
+                  A_DEFFLOAT, 0);          
   class_addmethod(multicycle_class, (t_method)multicycle_quantize,
                   gensym("quantize"), A_DEFFLOAT, 0);
     class_addmethod(multicycle_class, (t_method)multicycle_quantize_loop,

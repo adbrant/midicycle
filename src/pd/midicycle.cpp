@@ -58,6 +58,10 @@ void midicycle_overdub(t_midicycle *x, t_floatarg odub) {
   x->x_midicycle->overdub(odub > 0.5);
 }
 
+void midicycle_arm_mode(t_midicycle *x, t_floatarg arm_mode) {
+  x->x_midicycle->set_arm_mode(arm_mode > 0.5);
+}
+
 
 void midicycle_save(t_midicycle *x, t_symbol *file) {
   
@@ -93,6 +97,8 @@ void midicycle_setup(void) {
                   gensym("quantize"), A_DEFFLOAT, 0);
   class_addmethod(midicycle_class, (t_method)midicycle_overdub,
                   gensym("overdub"), A_DEFFLOAT, 0);     
+  class_addmethod(midicycle_class, (t_method)midicycle_arm_mode,
+                  gensym("arm_mode"), A_DEFFLOAT, 0);  
   class_addmethod(midicycle_class, (t_method)midicycle_save,
                   gensym("save"), A_DEFSYMBOL, 0);
   class_addmethod(midicycle_class, (t_method)midicycle_load,

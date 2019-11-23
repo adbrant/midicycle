@@ -163,10 +163,12 @@ std::vector<std::string>& MultiCycle::get_status() {
       m_status[statusline][blankspaces+i] =  'o';
     } else if (state == mcState::PLAYING){
       m_status[statusline][blankspaces+i] =   '>';
-      
+    } else if (state == mcState::ARMED){
+      m_status[statusline][blankspaces+i] =   'A';
+    } else if (state == mcState::RECORDING){
+      m_status[statusline][blankspaces+i] =   'R';                 
     } else if (state == mcState::STOP){
-      m_status[statusline][blankspaces+i] =   '|';
-      
+      m_status[statusline][blankspaces+i] =   '|';      
     }
   }
   return m_status;

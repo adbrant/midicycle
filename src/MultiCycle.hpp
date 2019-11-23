@@ -72,6 +72,13 @@ public:
     }
   }
   
+  // Set recording mode
+  void set_arm_mode(bool mode){
+    for( int i = 0; i < m_num_channels; i++ ) {
+      m_midicycles[i].set_arm_mode(mode);
+    }
+  }  
+  
   // Quantize only this loop, -1 is use global setting
   void quantize_loop(int loop, int division) { 
     m_loop_quant[loop] = division;
@@ -110,7 +117,7 @@ public:
   void footswitch(int fsval){
     if( fsval == 1 && m_midicycles[m_active_channel].get_state() == mcState::EMPTY ) {
       m_midicycles[m_active_channel].loop(m_loop_length);
-      DEBUG_POST("loop channel %d len %d",mc_id,m_loop_length);
+      DEBUG_POST("loop channel %d len %d",m_active_channel,m_loop_length);
     }  
   }
   

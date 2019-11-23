@@ -30,6 +30,8 @@
 #X msg 289 274 overdub 0;
 #X msg 357 11 save out.bin;
 #X msg 412 27 load out.bin;
+#X msg 415 173 arm_mode 1;
+#X msg 425 199 arm_mode 0;
 #X connect 0 0 12 0;
 #X connect 1 0 0 0;
 #X connect 2 0 0 0;
@@ -57,3 +59,5 @@
 #X connect 24 0 0 0;
 #X connect 25 0 0 0;
 #X connect 26 0 0 0;
+#X connect 27 0 0 0;
+#X connect 28 0 0 0;

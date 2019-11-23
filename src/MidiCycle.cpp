@@ -11,8 +11,14 @@ void MidiCycle::note_event(note_id note, char velocity) {
   }
 
   if (velocity) {
+    if(m_state == mcState::ARMED) {
+      // Start recording now
+      DEBUG_POST("MidiCycle: recording");
+      m_state = mcState::RECORDING; 
+      m_arm_remaining_steps = m_looplen * PPQ-1;
+    }
     // Don't record new notes if we are playing
-    if (m_state == mcState::EMPTY || m_overdub) {
+    if (m_state == mcState::EMPTY  || m_state == mcState::RECORDING  || m_overdub) {
       // Note on
       noteOnInfo note_on_info{velocity, m_step_global,m_step };
       m_held_notes.insert({note, note_on_info});
@@ -66,7 +72,11 @@ const timestep& MidiCycle::tick(int tick) {
     DEBUG_POST("Out of sync %d %d",tick,m_step%24);
     return m_notes_out;
   } 
-  
+  if (m_state == mcState::RECORDING) {   
+      if(m_arm_remaining_steps-- == 0){
+        commit_loop();   
+      }
+  }
   if (m_state == mcState::PLAYING) {   
     local_step steps_to_play = 1;
     // Depending on quantization play 0 or more steps
@@ -122,13 +132,12 @@ const timestep& MidiCycle::tick(int tick) {
       m_step = m_loop_start;
       //DEBUG_POST("loop looping");
     }
-  } else if (m_state == mcState::EMPTY){
+  } else {
+    // Empty or armed/recording;
     // Clear this step
-    // New notes will be commited later when they complete
-    m_seq_recorder.clear_step((m_step + 1) % m_max_length);
-    
+    // New notes will be committed later when they complete
+    m_seq_recorder.clear_step((m_step + 1) % m_max_length);   
     m_step = (m_step + 1) % m_max_length;
-
   } 
   while (!m_playing_notes.empty() &&
          (*m_playing_notes.begin()).first <= m_step_global) {  
@@ -155,13 +164,15 @@ void MidiCycle::loop(int beats) {
     // Stop playing and start recording again
     m_state = mcState::EMPTY;
     DEBUG_POST("loop ending");
-  } else {
+  } else  if (!m_arm_mode) {
     commit_loop();
+  } else {
+    DEBUG_POST("Armed");
+    m_state = mcState::ARMED;
   }
 }
 
 void MidiCycle::commit_loop() {
-
   DEBUG_POST("loop starting");
   m_state = mcState::PLAYING;
   
