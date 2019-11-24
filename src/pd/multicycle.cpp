@@ -160,7 +160,7 @@ void multicycle_tick(t_multicycle *x, t_floatarg f1) {
   x->x_multicycle->tick(int(f1));  
   play_notes(x);
   
-  if((int(f1) == 0) && x->x_multicycle->mainpage() ) {
+  if((int(f1) == 0) && x->x_multicycle->mainpage() && x->x_multicycle->state_changed() ) {
     print_status(x);
   }
 }

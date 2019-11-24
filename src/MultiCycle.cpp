@@ -170,6 +170,7 @@ std::vector<std::string>& MultiCycle::get_status() {
     } else if (state == mcState::STOP){
       m_status[statusline][blankspaces+i] =   '|';      
     }
+    mc.display_updated();
   }
   return m_status;
 }

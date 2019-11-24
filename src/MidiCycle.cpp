@@ -15,7 +15,8 @@ void MidiCycle::note_event(note_id note, char velocity) {
       // Start recording now
       DEBUG_POST("MidiCycle: recording");
       m_state = mcState::RECORDING; 
-      m_arm_remaining_steps = m_looplen * PPQ-1;
+      // -3 buffer to prevent repeated notes
+      m_arm_remaining_steps = m_looplen * PPQ-3;
     }
     // Don't record new notes if we are playing
     if (m_state == mcState::EMPTY  || m_state == mcState::RECORDING  || m_overdub) {

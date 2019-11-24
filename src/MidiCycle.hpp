@@ -14,7 +14,7 @@ class MidiCycle {
 friend class cereal::access;
 public:
   MidiCycle(int max_length=12)
-      : m_seq_recorder(max_length), m_state{mcState::EMPTY}, m_step{0},
+      : m_seq_recorder(max_length), m_state{mcState::EMPTY}, m_state_last_displayed{mcState::EMPTY}, m_step{0},
         m_step_global{0}, m_max_length{max_length}, m_held_notes(),
         m_playing_notes(), m_quantize(0), m_quantize_reset(false), m_overdub(false),m_notes_out(),m_idle_steps(0),m_idle(true),m_transpose(0),m_arm_mode(false){
           assert(max_length < (1 << 16));
@@ -75,11 +75,18 @@ public:
   int get_transpose(){
     return m_transpose;
   }  
+  void display_updated() {
+    m_state_last_displayed = m_state;
+  }
+  bool state_changed (){
+    return  m_state_last_displayed != m_state;
+  }
 private:
   
   void commit_loop();
   SeqRecorder m_seq_recorder;
   mcState m_state;
+  mcState m_state_last_displayed;
   // Step position in loop
   local_step m_step;
   // Steps seen regardless of loop

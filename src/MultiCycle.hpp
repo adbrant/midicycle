@@ -182,7 +182,13 @@ public:
       return false;
     }
   }
-  
+  bool state_changed(){
+    bool changed=false;
+    for(auto & mc: m_midicycles){
+      changed |= mc.state_changed();
+    }
+    return changed;
+  }
 private:
   int m_auxval;
   int m_max_length;
