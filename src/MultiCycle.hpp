@@ -189,6 +189,13 @@ public:
     }
     return changed;
   }
+  
+  // Legalize values post loading
+  void legalize(){
+    for( int i = 0; i < m_num_channels; i++ ) {
+      m_midicycles[i].legalize();
+    }
+  }  
 private:
   int m_auxval;
   int m_max_length;

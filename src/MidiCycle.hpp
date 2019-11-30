@@ -81,6 +81,8 @@ public:
   bool state_changed (){
     return  m_state_last_displayed != m_state;
   }
+  // Legalize values post loading
+  void legalize();
 private:
   
   void commit_loop();

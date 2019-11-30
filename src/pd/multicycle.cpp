@@ -199,7 +199,10 @@ void multicycle_load(t_multicycle *x,t_symbol *file) {
   if(is){
     cereal::BinaryInputArchive  archive(is);
     archive(*(x->x_multicycle));
+    //fix any illegal values from previous versions
+    x->x_multicycle->legalize();
   }
+  
 }
 
 void multicycle_activepage(t_multicycle *x,t_symbol *page) {

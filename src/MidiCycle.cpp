@@ -212,4 +212,15 @@ void MidiCycle::quantize(int division) {
     m_quantize_reset = true;
   }
 }
+
+void MidiCycle::legalize() {
+  if(m_step < 0 || m_loop_start < 0 || m_loop_end < 0
+  || m_step >= m_max_length || m_loop_start >= m_max_length || m_loop_end >= m_max_length ){
+    m_step = 0;
+    m_loop_start = 0;
+    m_loop_end = 0;
+    m_state = mcState::EMPTY;
+    DEBUG_POST("Illegal values detected, resetting midicycle");
+  }
+}
 }
