@@ -66,6 +66,12 @@ To record a loop to channel three:
  - To add more notes to this loop, turn 'overdub' on and play the notes you want to add.
  - To clear the loop, hold the lower D key for at least two beats and release it.
 
+### Armed Recording Mode
+'Armed Recording'  is easier to use if you are not using an external MIDI keyboard (enabled on the third page). 
+If enabled, instead of aux + the lower keys capturing the LAST played notes they will
+arm the track (represented by the letter A). 
+Once a new note is played the sequence will start recording (represented by the letter R) and automatically stop after the loop length and start playing.  
+
 ### Page 2:
  - Quantize : Sets quantization, (0 is off, 1 = whole note, 2 = 1/2 note, 3 = 1/3 note, 4 = 1/4 note)
  - Midi Src: -1 = organelle keys, 0 = omi mode, 1-16 = midi channel 1-16
@@ -76,7 +82,10 @@ To record a loop to channel three:
 ### Page 3:
  - BPM
  - Midi clock out on/off
-
+ - Arm Mode on/off
 
 ### Pages 4-9
 Dedicated controls for per channel destination and transpose (also can be changed on the main page).
+
+### Pages 10-12
+Dedicated controls for per channel quantization (-1 is global setting)
