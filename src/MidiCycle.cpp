@@ -1,6 +1,17 @@
 #include "MidiCycle.hpp"
 namespace MCycle {
-
+void calculate_loop_bounds(int current_step, int idle_steps, int loop_length, int buffer_size, int& loop_start, int& loop_end  ){
+  loop_end = current_step - idle_steps;
+  if( loop_end < 0) {
+    loop_end += buffer_size;
+  }
+  
+  loop_start = (loop_end - (loop_length * PPQ));
+      
+  if( loop_start < 0) {
+    loop_start += buffer_size;
+  }
+}
 
 void MidiCycle::note_event(note_id note, char velocity) {
   // Takes note on and off events
@@ -70,7 +81,7 @@ const timestep& MidiCycle::tick(int tick) {
   // We need to realign if we are out of sync
   // do nothing until we are aligned
   if (tick != (m_step % 24)) {
-    DEBUG_POST("Out of sync %d %d",tick,m_step%24);
+    DEBUG_POST("Out of sync %d %d %d",tick,m_step%24,m_step);
     return m_notes_out;
   } 
   if (m_state == mcState::RECORDING) {   
@@ -179,12 +190,8 @@ void MidiCycle::commit_loop() {
   
   int idle_steps = m_idle_steps > PPQ ? PPQ: m_idle_steps;
   
-  m_loop_start = (m_step - (m_looplen * PPQ) + m_max_length - idle_steps) % m_max_length;
-      
-  m_loop_end = m_step - idle_steps;
-  if( m_loop_end < 0) {
-    m_loop_end += (m_looplen * PPQ);
-  }
+  
+  calculate_loop_bounds(m_step,idle_steps,m_looplen,m_max_length, m_loop_start, m_loop_end);
   
   DEBUG_POST("loop start/end %d %d idle %d mstep %d %d", m_loop_start, m_loop_end,idle_steps,m_step,m_loop_start + idle_steps );
   m_step =  m_loop_start + idle_steps;

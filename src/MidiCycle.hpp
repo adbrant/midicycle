@@ -108,5 +108,5 @@ private:
   bool m_arm_mode;
   int m_arm_remaining_steps;
 };
-
+void calculate_loop_bounds(int current_step, int idle_steps, int loop_length, int buffer_size, int& loop_start, int& loop_end  );
 }

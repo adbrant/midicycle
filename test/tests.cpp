@@ -321,7 +321,7 @@ TEST_CASE("MultiCycle knob tracking", "[MultiCycle]"){
   }
   CHECK(msg[0] == "setparam"); 
   CHECK(msg[1] == "s2"); 
-  CHECK(msg[2] == "mc_trans_1");
+  CHECK(msg[2] == "mc_trans_0");
   CHECK( msg[3].find("0.8")== 0);
   msg.clear();
   
@@ -349,7 +349,19 @@ TEST_CASE("MultiCycle knob tracking", "[MultiCycle]"){
   }
   CHECK(msg[0] == "setparam"); 
   CHECK(msg[1] == "s2"); 
-  CHECK(msg[2] == "mc_chan_1");
+  CHECK(msg[2] == "mc_chan_0");
   CHECK( msg[3].find("0.6")== 0);
 }
 
+
+TEST_CASE("Loop bounds calculation", "[MidiCycle]"){
+  int buffer_size = 64*4*PPQ*4;
+  int current_step = 0, idle_steps = 0;
+  int loop_length = 4;
+  int loop_start, loop_end;
+  calculate_loop_bounds(current_step, idle_steps, loop_length, buffer_size, loop_start, loop_end  );
+    printf("loop start/end %d %d idle %d mstep %d %d\n", loop_start, loop_end,idle_steps,current_step);
+  
+}
+  
+  
