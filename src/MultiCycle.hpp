@@ -195,7 +195,14 @@ public:
     for( int i = 0; i < m_num_channels; i++ ) {
       m_midicycles[i].legalize();
     }
-  }  
+  } 
+
+  // swing amount
+  void swing(int division,  int amount){
+    for( int i = 0; i < m_num_channels; i++ ) {
+      m_midicycles[i].swing(division, amount);
+    }
+  }    
 private:
   int m_auxval;
   int m_max_length;

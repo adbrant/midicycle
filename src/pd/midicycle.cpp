@@ -35,6 +35,10 @@ void midicycle_note(t_midicycle *x, t_floatarg f1, t_floatarg f2) {
   x->x_midicycle->note_event(unsigned(f1), unsigned(f2));
 }
 
+void midicycle_swing(t_midicycle *x, t_floatarg f1, t_floatarg f2) {
+  x->x_midicycle->swing(unsigned(f1), unsigned(f2));
+}
+
 void midicycle_tick(t_midicycle *x, t_floatarg f1) {
   auto &tstep = x->x_midicycle->tick(unsigned(f1));
   
@@ -99,6 +103,8 @@ void midicycle_setup(void) {
                   gensym("overdub"), A_DEFFLOAT, 0);     
   class_addmethod(midicycle_class, (t_method)midicycle_arm_mode,
                   gensym("arm_mode"), A_DEFFLOAT, 0);  
+  class_addmethod(midicycle_class, (t_method)midicycle_swing, gensym("swing"),
+                  A_DEFFLOAT, A_DEFFLOAT, 0);
   class_addmethod(midicycle_class, (t_method)midicycle_save,
                   gensym("save"), A_DEFSYMBOL, 0);
   class_addmethod(midicycle_class, (t_method)midicycle_load,

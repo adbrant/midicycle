@@ -16,7 +16,7 @@ public:
   MidiCycle(int max_length=12)
       : m_seq_recorder(max_length), m_state{mcState::EMPTY}, m_state_last_displayed{mcState::EMPTY}, m_step{0},
         m_step_global{0}, m_max_length{max_length}, m_held_notes(),
-        m_playing_notes(), m_quantize(0), m_quantize_reset(false), m_overdub(false),m_notes_out(),m_idle_steps(0),m_idle(true),m_transpose(0),m_arm_mode(false){
+        m_playing_notes(), m_quantize(0), m_quantize_reset(false), m_overdub(false),m_notes_out(),m_idle_steps(0),m_idle(true),m_transpose(0),m_arm_mode(false), m_swing_8(0), m_swing_16(0){
           assert(max_length < (1 << 16));
         }
         
@@ -83,6 +83,25 @@ public:
   }
   // Legalize values post loading
   void legalize();
+  
+
+  // swing amount
+  void swing(int division, int amount){
+    if (division == 8) {
+      if(amount != m_swing_8){
+        m_swing_8 = amount;
+        m_quantize_reset = true;
+      }
+    } else if (division == 16){
+       if(amount != m_swing_16) {
+        m_swing_16 = amount;
+        m_quantize_reset = true;
+      }    
+    } 
+    else {
+      DEBUG_POST("MidiCyle: invalid division");
+    }
+  }  
 private:
   
   void commit_loop();
@@ -109,6 +128,8 @@ private:
   int m_transpose;
   bool m_arm_mode;
   int m_arm_remaining_steps;
+  int m_swing_8;
+  int m_swing_16;
 };
 void calculate_loop_bounds(int current_step, int idle_steps, int loop_length, int buffer_size, int& loop_start, int& loop_end  );
 }

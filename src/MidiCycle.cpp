@@ -13,6 +13,20 @@ void calculate_loop_bounds(int current_step, int idle_steps, int loop_length, in
   }
 }
 
+
+bool play_on_step_quantized( int tick, int quantize_len, int swing8, int swing16) {
+  if (quantize_len == 6) {
+    // 16th notes
+    return (tick == 0) || (tick == (6+swing16)) || (tick == (12+swing8)) || (tick == (18+swing16));
+  } else if (quantize_len == 12) {
+    // 8th notes
+    return (tick == 0) || (tick == (12+swing8));
+  }  else  {
+    // no swing added to triplets
+    return (tick%quantize_len) == 0;
+  }  
+}
+
 void MidiCycle::note_event(note_id note, char velocity) {
   // Takes note on and off events
   // Once they are complete, write to the note recorder
@@ -94,12 +108,12 @@ const timestep& MidiCycle::tick(int tick) {
     // Depending on quantization play 0 or more steps
     if(m_quantize > 0){
       int quantize_len = int(PPQ/m_quantize);
-      if(m_step%quantize_len != 0) {
+      if(!play_on_step_quantized( tick, quantize_len, m_swing_8,  m_swing_16) ) {  
         // Don't play on this step
         steps_to_play = 0;
       } else {
         
-        if(m_quantize_reset) {
+        if((tick == 0) && m_quantize_reset) {
           // Initial step, just play up to next beat
           m_quantize_position = m_step;
           steps_to_play = 1+(quantize_len/2);

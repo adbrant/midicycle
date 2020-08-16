@@ -8,7 +8,8 @@
 
 
 #ifdef TEST
-#define DEBUG_POST(M, ...) printf(M); printf("\n")
+//#define DEBUG_POST(M, ...) printf(M); printf("\n")
+#define DEBUG_POST(M, ...) ;
 #else
 #include "m_pd.h"
 //#define DEBUG_POST post
