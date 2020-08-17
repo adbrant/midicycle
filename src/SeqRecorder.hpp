@@ -20,7 +20,8 @@ public:
   void add_note(int step, noteEvent note);
 
   void clear_step(int step) {
-    assert(step >= 0 && step < m_sequence_size);
+    assert(step >= 0);
+    assert(step < m_sequence_size);
     if (!m_sequence_data[step])
       return;
 
