@@ -225,7 +225,9 @@ void multicycle_knob_raw(t_multicycle *x,t_floatarg knob, t_floatarg raw) {
   }
 }
 
-
+void multicycle_swing(t_multicycle *x, t_floatarg f1, t_floatarg f2) {
+  x->x_multicycle->swing(unsigned(f1), unsigned(f2));
+}
 
 void multicycle_setup(void) {
   multicycle_class = class_new(gensym("multicycle"), (t_newmethod)multicycle_new,
@@ -270,7 +272,8 @@ void multicycle_setup(void) {
                   gensym("activemodule"), A_DEFSYMBOL, 0);
   class_addmethod(multicycle_class, (t_method)multicycle_moduleid,
                   gensym("moduleid"), A_DEFSYMBOL, 0);
-
+  class_addmethod(multicycle_class, (t_method)multicycle_swing, gensym("swing"),
+                  A_DEFFLOAT, A_DEFFLOAT, 0);
   class_addmethod(multicycle_class, (t_method)multicycle_knob_raw, gensym("knobraw"),
                   A_DEFFLOAT,A_DEFFLOAT, 0);   
 
