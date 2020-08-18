@@ -231,7 +231,7 @@ TEST_CASE("MultiCycle usage and serialization", "[MultiCycle]"){
   bool note_playing = false ;
   int note = 0;
   for (int step = 0; step < RUNSTEPS; step++) {
-    mc.tick(step%24);
+    mc.tick(step%PPQ);
     
     if(rand() % 256 < 8) {
       if (!note_playing ) {

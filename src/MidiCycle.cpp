@@ -15,12 +15,12 @@ void calculate_loop_bounds(int current_step, int idle_steps, int loop_length, in
 
 
 bool play_on_step_quantized( int tick, int quantize_len, int swing8, int swing16) {
-  if (quantize_len == 6) {
+  if (quantize_len == (PPQ/4)) {
     // 16th notes
-    return (tick == 0) || (tick == (6+swing16)) || (tick == (12+swing8)) || (tick == (18+swing16));
-  } else if (quantize_len == 12) {
+    return (tick == 0) || (tick == ((PPQ/4)+swing16)) || (tick == (PPQ/2+swing8)) || (tick == ((3*PPQ/4)+swing16));
+  } else if (quantize_len == PPQ/2) {
     // 8th notes
-    return (tick == 0) || (tick == (12+swing8));
+    return (tick == 0) || (tick == (PPQ/2+swing8));
   }  else  {
     // no swing added to triplets
     return (tick%quantize_len) == 0;
@@ -94,8 +94,8 @@ const timestep& MidiCycle::tick(int tick) {
   
   // We need to realign if we are out of sync
   // do nothing until we are aligned
-  if (tick != (m_step % 24)) {
-    DEBUG_POST("Out of sync %d %d %d",tick,m_step%24,m_step);
+  if (tick != (m_step % PPQ)) {
+    DEBUG_POST("Out of sync %d %d %d",tick,m_step%PPQ,m_step);
     return m_notes_out;
   } 
   if (m_state == mcState::RECORDING) {   
