@@ -32,7 +32,8 @@ public:
   bool step_empty(int step) { return (m_sequence_data[step] == nullptr); }
 
   const timestep &get_step(int step) const {
-    assert(step >= 0 && step < m_sequence_size);
+    assert(step >= 0);
+    assert(step < m_sequence_size);
     assert(m_sequence_data[step] != NULL);
     return *m_sequence_data[step];
   };

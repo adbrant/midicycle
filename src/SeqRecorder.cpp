@@ -10,7 +10,8 @@ void SeqRecorder::add_note(int step, noteEvent note) {
   //   Low occupancy
   //   Frequent empty of steps and insert of notes
   //   Std::vectors will keep their buffers so
-  assert(step >= 0 && step < m_sequence_size);
+  assert(step >= 0);
+  assert(step < m_sequence_size);
   DEBUG_POST("Add note at %d", step);
   if (!m_sequence_data[step]) {
     if (m_empty_vectors.empty()) {
