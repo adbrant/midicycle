@@ -18,7 +18,7 @@
 
 
 namespace MCycle {
-enum { PPQ = 24 }; // Pulses per quarter note
+enum { PPQ = 96 }; // Pulses per quarter note
 
 // note_id may need to include channel later
 typedef char note_id;
