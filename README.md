@@ -67,7 +67,7 @@ To record a loop to channel three:
  - To clear the loop, hold the lower D key for at least two beats and release it.
 
 ### Armed Recording Mode
-'Armed Recording'  is easier to use if you are not using an external MIDI keyboard (enabled on the third page). 
+'Armed Recording'  is easier to use if you are not using an external MIDI keyboard, and can be enabled on the third page. 
 If enabled, instead of aux + the lower keys capturing the LAST played notes they will
 arm the track (represented by the letter A). 
 Once a new note is played the sequence will start recording (represented by the letter R) and automatically stop after the loop length and start playing.  
